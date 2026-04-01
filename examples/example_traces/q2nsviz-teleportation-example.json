@@ -1,0 +1,53 @@
+{"type":"createNode","t_ns":0,"label":"Alice","x":25,"y":25}
+{"type":"createNode","t_ns":0,"label":"Bob","x":75,"y":25}
+{"type":"createChannel","t_ns":0,"from":"Alice","to":"Bob","kind":"quantum"}
+{"type":"createChannel","t_ns":0,"from":"Alice","to":"Bob","kind":"classical"}
+{"type":"traceText","t_ns":1000,"text":"Phase 1: Alice creates eprA and eprB"}
+{"type":"traceText","t_ns":1000,"node":"Alice","text":"Phase 1: preparing Bell pair"}
+{"type":"createBit","t_ns":1000,"node":"Alice","label":"alice_epr","kind":"quantum","color":"#88CCEE"}
+{"type":"createBit","t_ns":1000,"node":"Alice","label":"bob_epr","kind":"quantum","color":"#88CCEE"}
+{"type":"traceText","t_ns":1100,"text":"Alice applies H to eprA"}
+{"type":"setBitColor","t_ns":1100,"bit":"alice_epr","color":"#bc71eb"}
+{"type":"traceText","t_ns":1100,"node":"Alice","text":"H(eprA)"}
+{"type":"traceText","t_ns":1400,"text":"Alice applies CNOT(eprA, eprB) -> Bell pair |Phi+>"}
+{"type":"entangle","t_ns":1400,"bits":["alice_epr","bob_epr"]}
+{"type":"setBitColor","t_ns":1400,"bit":"alice_epr","color":"#117733"}
+{"type":"setBitColor","t_ns":1400,"bit":"bob_epr","color":"#117733"}
+{"type":"traceText","t_ns":1400,"node":"Alice","text":"CNOT(eprA, eprB): Bell pair |Phi+> ready"}
+{"type":"traceText","t_ns":1500,"text":"Alice sends eprB to Bob"}
+{"type":"sendBit","t0_ns":1500,"t1_ns":1510,"bit":"bob_epr","from":"Alice","to":"Bob","kind":"quantum"}
+{"type":"traceText","t_ns":1500,"node":"Alice","text":"eprB sent - in transit to Bob (+10ns)"}
+{"type":"traceText","t_ns":1510,"text":"Bob receives eprB"}
+{"type":"setBitColor","t_ns":1510,"bit":"bob_epr","color":"#117733"}
+{"type":"traceText","t_ns":1510,"node":"Bob","text":"eprB arrived - half of Bell pair received"}
+{"type":"traceText","t_ns":3500,"text":"Phase 2: Teleportation begins"}
+{"type":"traceText","t_ns":3500,"node":"Alice","text":"Phase 2: teleportation (entanglement pre-shared)"}
+{"type":"createBit","t_ns":3500,"node":"Alice","label":"psi","kind":"quantum","color":"#DDCC77"}
+{"type":"traceText","t_ns":3600,"text":"Alice applies H to psi -> |+> (state to teleport)"}
+{"type":"setBitColor","t_ns":3600,"bit":"psi","color":"#DDCC77"}
+{"type":"traceText","t_ns":3600,"node":"Alice","text":"H(psi): state to teleport is |+>"}
+{"type":"traceText","t_ns":3900,"text":"Alice BSM step 1: CNOT(psi, eprA)"}
+{"type":"traceText","t_ns":3900,"node":"Alice","text":"BSM step 1: CNOT(psi, eprA)"}
+{"type":"traceText","t_ns":4000,"text":"Alice BSM step 2: H(psi)"}
+{"type":"traceText","t_ns":4000,"node":"Alice","text":"BSM step 2: H(psi)"}
+{"type":"traceText","t_ns":4100,"text":"Alice BSM step 3: Z-measure psi and eprA"}
+{"type":"measure","t_ns":4100,"bit":"psi","base":"Z"}
+{"type":"measure","t_ns":4100,"bit":"alice_epr","base":"Z"}
+{"type":"traceText","t_ns":4100,"text":"BSM outcome: m1=1 m2=0"}
+{"type":"setBitColor","t_ns":4100,"bit":"psi","color":"#000000"}
+{"type":"setBitColor","t_ns":4100,"bit":"alice_epr","color":"#FFFFFF"}
+{"type":"traceText","t_ns":4100,"node":"Alice","text":"BSM complete: m1=1 m2=0"}
+{"type":"sendPacket","t0_ns":4100,"t1_ns":4110,"from":"Alice","to":"Bob","label":"Corrections m1=1 m2=0"}
+{"type":"traceText","t_ns":4100,"node":"Alice","text":"Corrections sent: m1=1 m2=0"}
+{"type":"removeBit","t_ns":4100,"bit":"psi"}
+{"type":"removeBit","t_ns":4100,"bit":"alice_epr"}
+{"type":"traceText","t_ns":6670,"text":"Bob receives classical corrections m1=1 m2=0"}
+{"type":"traceText","t_ns":6670,"node":"Bob","text":"Corrections received: m1=1 m2=0"}
+{"type":"traceText","t_ns":6670,"text":"Bob applies Pauli corrections Z^m1 X^m0"}
+{"type":"traceText","t_ns":6670,"node":"Bob","text":"Z correction applied (m1=1)"}
+{"type":"traceText","t_ns":6670,"node":"Bob","text":"X correction skipped (m2=0)"}
+{"type":"setBitColor","t_ns":6670,"bit":"bob_epr","color":"#DDCC77"}
+{"type":"traceText","t_ns":6670,"node":"Bob","text":"Teleportation complete - eprB holds psi state"}
+{"type":"traceText","t_ns":6670,"text":"Bob verifies teleported state (X-basis)"}
+{"type":"measure","t_ns":6670,"bit":"bob_epr","base":"X"}
+{"type":"traceText","t_ns":6670,"node":"Bob","text":"X-measure: 0 (expected 0 -> |+> received)"}

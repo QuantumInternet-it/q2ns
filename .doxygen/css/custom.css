@@ -1,0 +1,287 @@
+/* ==========================================================================
+   Q2NS documentation theme overrides
+   Built on top of Doxygen Awesome CSS (MIT License)
+   https://github.com/jothepro/doxygen-awesome-css
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Theme variables
+   ========================================================================== */
+
+:root {
+  --q2ns-blue-dark: #0c2547;
+  --q2ns-blue: #123463;
+  --q2ns-magenta: #924069;
+
+  --primary-color: var(--q2ns-blue);
+  --primary-dark-color: var(--q2ns-blue-dark);
+
+  --page-width: 1180px;
+  --content-maxwidth: 1180px;
+  --toc-width: 320px;
+
+  --side-nav-fixed-width: 340px;
+
+  --fragment-border-radius: 10px;
+  --border-radius-large: 14px;
+}
+
+/* ==========================================================================
+   2. Global / layout cleanup
+   ========================================================================== */
+
+#top {
+  display: none !important;
+}
+
+#doc-content,
+div.header,
+div.contents {
+  margin-top: 0 !important;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+/* ==========================================================================
+   3. Sidebar layout and appearance
+   ========================================================================== */
+
+#side-nav {
+  top: 0 !important;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--q2ns-blue) !important;
+}
+
+#side-nav,
+#nav-tree,
+#nav-tree .children_ul,
+#nav-tree .item,
+.ui-resizable {
+  background: var(--q2ns-blue) !important;
+}
+
+#nav-tree {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.ui-resizable-handle {
+  height: 100% !important;
+}
+
+#nav-tree .label,
+#nav-tree .item .label,
+#nav-tree .label a {
+  color: white !important;
+}
+
+#nav-tree .label a:hover {
+  color: var(--q2ns-magenta) !important;
+}
+
+#nav-tree .selected .label,
+#nav-tree .selected .label a,
+#nav-tree .current .label a,
+#nav-tree .selected > div > a,
+#nav-tree .selected > div > span {
+  color: var(--q2ns-magenta) !important;
+  font-weight: 700;
+}
+
+#nav-sync {
+  display: none !important;
+}
+
+/* ==========================================================================
+   4. Sidebar logo/search/credit
+   ========================================================================== */
+
+#q2ns-sidebar-logo {
+  padding: 1rem 1rem 0.5rem 1rem;
+  background: var(--q2ns-blue);
+}
+
+.q2ns-sidebar-logo-card {
+  background: white;
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.q2ns-sidebar-logo-card img {
+  max-width: 100%;
+  max-height: 54px;
+  width: auto;
+  height: auto;
+  display: block;
+}
+
+#q2ns-sidebar-search {
+  padding: 0.25rem 1rem 0.9rem 1rem;
+  background: var(--q2ns-blue);
+}
+
+#q2ns-sidebar-search #MSearchBox,
+#q2ns-sidebar-search .search,
+#q2ns-sidebar-search #searchBox {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#q2ns-sidebar-search input,
+#q2ns-sidebar-search .left,
+#q2ns-sidebar-search .right,
+#q2ns-sidebar-search .MSearchBoxInactive,
+#q2ns-sidebar-search .MSearchBoxActive {
+  box-sizing: border-box;
+}
+
+#q2ns-sidebar-search input[type="text"] {
+  width: 100%;
+  border-radius: 999px;
+}
+
+#q2ns-sidebar-credit {
+  margin-top: auto;
+  padding: 1rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+#q2ns-sidebar-credit a,
+#q2ns-sidebar-credit a:visited {
+  color: rgba(255, 255, 255, 0.92) !important;
+  text-decoration: underline;
+}
+
+#q2ns-sidebar-credit a:hover,
+#q2ns-sidebar-credit a:active {
+  color: var(--q2ns-magenta) !important;
+}
+
+/* ==========================================================================
+   4b. Search results positioning
+   ========================================================================== */
+
+#MSearchResultsWindow {
+  left: calc(var(--side-nav-fixed-width, 340px) - 24px) !important;
+  right: auto !important;
+  top: 90px !important;
+  width: min(720px, calc(100vw - var(--side-nav-fixed-width, 340px) - 48px)) !important;
+  max-width: none !important;
+}
+
+#MSearchResultsWindow,
+#MSearchResults {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   5. Main content styling
+   ========================================================================== */
+
+.contents {
+  line-height: 1.65;
+}
+
+.contents a {
+  color: var(--q2ns-blue);
+}
+
+.contents a:hover {
+  color: var(--q2ns-magenta);
+}
+
+.contents h1,
+.contents h2 {
+  border-bottom: 2px solid rgba(146, 64, 105, 0.25);
+  padding-bottom: 0.2rem;
+}
+
+.contents h1,
+.contents h2,
+.contents h3 {
+  scroll-margin-top: 1rem;
+}
+
+.fragment,
+table.doxtable {
+  border-top: 3px solid var(--q2ns-magenta);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+::selection {
+  background: var(--q2ns-blue-dark);
+  color: white;
+}
+
+.q2ns-badges {
+  margin: 1rem 0 1.5rem 0;
+}
+
+.q2ns-badges img {
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
+/* ==========================================================================
+   6. Unified footer block
+   ========================================================================== */
+
+#nav-path.q2ns-footer,
+.navpath.q2ns-footer {
+  display: block !important;
+  background: transparent !important;
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+#nav-path.q2ns-footer ul,
+#nav-path.q2ns-footer li {
+  display: none !important;
+}
+
+.q2ns-footer-inner {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--separator-color);
+  box-sizing: border-box;
+}
+
+.q2ns-footer-left,
+.q2ns-footer-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.q2ns-footer-left img,
+.q2ns-footer-right img {
+  max-height: 42px;
+  width: auto;
+  display: block;
+}
+
+.q2ns-footer-text {
+  flex: 1 1 420px;
+  min-width: 260px;
+}

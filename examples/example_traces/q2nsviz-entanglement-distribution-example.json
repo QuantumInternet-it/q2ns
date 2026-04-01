@@ -1,0 +1,58 @@
+{"type":"traceText","t_ns":0,"text":"Entanglement Distribution with 3 nodes"}
+{"type":"createNode","t_ns":0,"label":"Node1","x":85,"y":50}
+{"type":"createNode","t_ns":0,"label":"Node2","x":32,"y":80}
+{"type":"createNode","t_ns":0,"label":"Node3","x":32,"y":19}
+{"type":"createChannel","t_ns":0,"from":"Node1","to":"Node2","kind":"quantum"}
+{"type":"createChannel","t_ns":0,"from":"Node1","to":"Node2","kind":"classical"}
+{"type":"createChannel","t_ns":0,"from":"Node1","to":"Node3","kind":"quantum"}
+{"type":"createChannel","t_ns":0,"from":"Node1","to":"Node3","kind":"classical"}
+{"type":"createChannel","t_ns":0,"from":"Node2","to":"Node3","kind":"quantum"}
+{"type":"createChannel","t_ns":0,"from":"Node2","to":"Node3","kind":"classical"}
+{"type":"traceText","t_ns":1000,"text":"Step 1: Node1 initializes Bell pair 0 (for Node2)"}
+{"type":"traceText","t_ns":1000,"node":"Node1","text":"Step 1: init Bell pair 0"}
+{"type":"createBit","t_ns":1000,"node":"Node1","label":"bell_0_a","kind":"quantum","color":"#88CCEE"}
+{"type":"createBit","t_ns":1000,"node":"Node1","label":"bell_0_b","kind":"quantum","color":"#88CCEE"}
+{"type":"setBitColor","t_ns":1100,"bit":"bell_0_a","color":"#BC71EB"}
+{"type":"traceText","t_ns":1100,"node":"Node1","text":"H(bell_0_a)"}
+{"type":"entangle","t_ns":1400,"bits":["bell_0_a","bell_0_b"]}
+{"type":"traceText","t_ns":1400,"node":"Node1","text":"Bell pair 0 ready"}
+{"type":"sendBit","t0_ns":1500,"t1_ns":1600,"bit":"bell_0_b","from":"Node1","to":"Node2","kind":"quantum"}
+{"type":"traceText","t_ns":1500,"node":"Node1","text":"bell_0_b in transit to Node2"}
+{"type":"setBitColor","t_ns":1500,"bit":"bell_0_a","color":"#90EE90"}
+{"type":"setBitColor","t_ns":1600,"bit":"bell_0_b","color":"#90EE90"}
+{"type":"traceText","t_ns":1600,"node":"Node2","text":"Qubit bell_0_b arrived - entangled with Node1"}
+{"type":"sendPacket","t0_ns":1600,"t1_ns":1700,"from":"Node2","to":"Node1","label":"ACK: bell_0_b received"}
+{"type":"traceText","t_ns":3000,"text":"Step 2: Node1 initializes Bell pair 1 (for Node3)"}
+{"type":"traceText","t_ns":3000,"node":"Node1","text":"Step 2: init Bell pair 1"}
+{"type":"createBit","t_ns":3000,"node":"Node1","label":"bell_1_a","kind":"quantum","color":"#88CCEE"}
+{"type":"createBit","t_ns":3000,"node":"Node1","label":"bell_1_b","kind":"quantum","color":"#88CCEE"}
+{"type":"setBitColor","t_ns":3100,"bit":"bell_1_a","color":"#BC71EB"}
+{"type":"traceText","t_ns":3100,"node":"Node1","text":"H(bell_1_a)"}
+{"type":"entangle","t_ns":3400,"bits":["bell_1_a","bell_1_b"]}
+{"type":"traceText","t_ns":3400,"node":"Node1","text":"Bell pair 1 ready"}
+{"type":"sendBit","t0_ns":3500,"t1_ns":3600,"bit":"bell_1_b","from":"Node1","to":"Node3","kind":"quantum"}
+{"type":"traceText","t_ns":3500,"node":"Node1","text":"bell_1_b in transit to Node3"}
+{"type":"setBitColor","t_ns":3500,"bit":"bell_1_a","color":"#90EE90"}
+{"type":"setBitColor","t_ns":3600,"bit":"bell_1_b","color":"#90EE90"}
+{"type":"traceText","t_ns":3600,"node":"Node3","text":"Qubit bell_1_b arrived (1/2)"}
+{"type":"sendPacket","t0_ns":3600,"t1_ns":3700,"from":"Node3","to":"Node1","label":"ACK: bell_1_b received"}
+{"type":"traceText","t_ns":4180,"node":"Node1","text":"ACK received (1/2 links confirmed)"}
+{"type":"traceText","t_ns":5000,"text":"Step 3: Node2 initializes Bell pair 2 (for Node3)"}
+{"type":"traceText","t_ns":5000,"node":"Node2","text":"Step 3: init Bell pair 2"}
+{"type":"createBit","t_ns":5000,"node":"Node2","label":"bell_2_a","kind":"quantum","color":"#88CCEE"}
+{"type":"createBit","t_ns":5000,"node":"Node2","label":"bell_2_b","kind":"quantum","color":"#88CCEE"}
+{"type":"setBitColor","t_ns":5100,"bit":"bell_2_a","color":"#BC71EB"}
+{"type":"traceText","t_ns":5100,"node":"Node2","text":"H(bell_2_a)"}
+{"type":"entangle","t_ns":5400,"bits":["bell_2_a","bell_2_b"]}
+{"type":"traceText","t_ns":5400,"node":"Node2","text":"Bell pair 2 ready"}
+{"type":"sendBit","t0_ns":5500,"t1_ns":5600,"bit":"bell_2_b","from":"Node2","to":"Node3","kind":"quantum"}
+{"type":"traceText","t_ns":5500,"node":"Node2","text":"bell_2_b in transit to Node3"}
+{"type":"setBitColor","t_ns":5500,"bit":"bell_2_a","color":"#90EE90"}
+{"type":"setBitColor","t_ns":5600,"bit":"bell_2_b","color":"#90EE90"}
+{"type":"traceText","t_ns":5600,"node":"Node3","text":"Qubit bell_2_b arrived (2/2)"}
+{"type":"sendPacket","t0_ns":5600,"t1_ns":5700,"from":"Node3","to":"Node2","label":"ACK: bell_2_b received"}
+{"type":"traceText","t_ns":6180,"node":"Node1","text":"ACK received (2/2 links confirmed)"}
+{"type":"traceText","t_ns":6180,"text":"Node1: both Bell pair links confirmed"}
+{"type":"traceText","t_ns":8180,"node":"Node2","text":"ACK from Node3: Bell pair 2 link confirmed"}
+{"type":"traceText","t_ns":8180,"text":"Node2: Bell pair 2 confirmed by Node3"}
+{"type":"traceText","t_ns":20000,"text":"All Bell pairs distributed and confirmed - full-mesh entanglement established"}

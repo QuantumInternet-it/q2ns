@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use Q2NS in your research, please cite the reference paper:"
+title: "Q2NS"
+type: software
+
+authors:
+  - family-names: Pearson
+    given-names: Adam
+  - family-names: Mazza
+    given-names: Francesco
+  - family-names: Caleffi
+    given-names: Marcello
+  - family-names: Cacciapuoti
+    given-names: Angela Sara
+
+repository-code: "https://github.com/QuantumInternet-it/q2ns"
+license: "GPL-2.0-only"
+url: "https://github.com/QuantumInternet-it/q2ns"
+
+preferred-citation:
+  type: article
+  title: "An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation"
+  authors:
+    - family-names: Pearson
+      given-names: Adam
+    - family-names: Mazza
+      given-names: Francesco
+    - family-names: Caleffi
+      given-names: Marcello
+    - family-names: Cacciapuoti
+      given-names: Angela Sara
+  year: 2026
+  journal: "arXiv"
+  url: "https://arxiv.org/abs/2603.02857"

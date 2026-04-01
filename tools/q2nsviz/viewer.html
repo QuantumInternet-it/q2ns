@@ -1,0 +1,1892 @@
+<!--
+-----------------------------------------------------------------------------
+  Q2NS: Quantum Network Simulator
+  Copyright (c) 2026 quantuminternet.it
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License version 2 as
+  published by the Free Software Foundation.
+-----------------------------------------------------------------------------
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ns-3 Quantum Network Visualization Viewer</title>
+  
+  <style>
+    /* --- Variables --- */
+    :root {
+      /* Color palette for consistent theming */
+      --bg: #fafbfc;
+      --panel: rgba(255, 255, 255, 0.95);
+      --ink: #2c3e50;
+      --node: #ffffff;
+      --stroke: #bdc3c7;
+      --stroke-strong: #7f8c8d;
+      --quantum: #4745dbba;
+      --classic: #f39c12;
+      --accent: #e74c3c;
+      --text-light: #7f8c8d;
+      --shadow: rgba(0, 0, 0, 0.08);
+    }
+
+    /* --- Base layout --- */
+    html, body { 
+      margin: 0; 
+      height: 100%; 
+      background: #f8f9fa; 
+      color: var(--ink); 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+      font-weight: 400;
+    }
+    
+    svg { 
+      width: 100vw; 
+      height: 100vh; 
+      display: block; 
+    }
+
+    /* --- Node styles --- */
+    .nodeRect { 
+      fill: var(--node); 
+      stroke: var(--stroke-strong); 
+      stroke-width: 2;
+      filter: drop-shadow(0 1px 3px var(--shadow));
+      rx: 2;
+      ry: 2;
+    }
+    
+    .nodeHeader { 
+      font-weight: 600; 
+      font-size: 14px; 
+      fill: var(--ink); 
+      letter-spacing: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    .sectionLabel { 
+      font-size: 10px; 
+      fill: var(--text-light); 
+      opacity: 0.9; 
+      text-transform: uppercase; 
+      letter-spacing: 0.1em; 
+      font-weight: 600;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* --- Channels --- */
+    .chan { 
+      fill: none; 
+      stroke-width: 2; 
+      opacity: 0.9; 
+    }
+    
+    .chan.classical { 
+      stroke: var(--classic); 
+      stroke-dasharray: 4 2; 
+    }
+    
+    .chan.quantum { 
+      stroke: var(--quantum); 
+      stroke-dasharray: 0; 
+    }
+
+    .rowLabel { 
+      font-size: 10px; 
+      fill: var(--text-light); 
+      font-weight: 600;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    
+    .bit { 
+      stroke: var(--stroke-strong); 
+      stroke-width: 1.5; 
+      filter: drop-shadow(0 1px 2px var(--shadow));
+    }
+    .entanglementWave { 
+      fill: none; 
+      stroke: var(--quantum); 
+      stroke-width: 1.5; 
+      opacity: 0.8;
+      stroke-linecap: round;
+    }
+
+    .qubitLink {
+      stroke-width: 2;
+      opacity: 0.9;
+      stroke-dasharray: 3 2;
+    }
+
+    .groupLink { 
+      fill: none; 
+      stroke-width: 2.5; 
+      opacity: 0.8;
+      stroke-linecap: round;
+    }
+
+    .inflight { 
+      opacity: 0.95; 
+      filter: drop-shadow(0 1px 4px var(--shadow));
+    }
+
+    .pktg .pkt { 
+      fill: var(--classic);
+      opacity: 0.95; 
+      stroke: var(--stroke-strong); 
+      stroke-width: 1.5;
+      filter: drop-shadow(0 1px 3px var(--shadow));
+    }
+    
+    .pktg .label { 
+      font-size: 12px; 
+      fill: var(--ink);
+      font-weight: 500;
+    }
+
+    /* --- UI controls --- */
+    .controlpanel { 
+      position: fixed; 
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--panel); 
+      padding: 12px 16px; 
+      border-radius: 3px; 
+      border: 1px solid var(--stroke);
+      box-shadow: 0 1px 4px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .control-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      flex-wrap: nowrap;
+      flex-direction: row;
+    }
+    
+    .control-row button {
+      height: 32px;
+      padding: 6px 12px;
+      font-size: 14px;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 60px;
+      margin-right: 0;
+    }
+    
+    .control-row label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-right: 0;
+    }
+    
+    .controlpanel button { 
+      margin-right: 0; 
+    }
+    
+    /* Button styling for interactive controls */
+    button { 
+      background: var(--node); 
+      color: var(--ink); 
+      border: 1px solid var(--stroke); 
+      padding: 6px 10px; 
+      border-radius: 2px; 
+      cursor: pointer; 
+      font-weight: 500;
+      font-family: "Computer Modern", "Latin Modern Math", "CMU Serif", monospace;
+      transition: all 0.15s ease;
+    }
+    
+    button:hover {
+      background: var(--stroke);
+      border-color: var(--stroke-strong);
+    }
+    
+    /* Range input styling for time scrubbing and speed control */
+    input[type=range] { 
+      width: 220px; 
+      vertical-align: middle; 
+    }
+    
+    /* Text labels in control panel */
+    .controlpanel small { 
+      opacity: 0.8; 
+      margin-left: 8px; 
+      font-variant-numeric: tabular-nums; 
+      color: var(--text-light);
+    }
+
+    /* Event trace panel */
+    /* --- Trace panel --- */
+    .tracepanel {
+      position: fixed; 
+      right: 16px; 
+      bottom: 16px; 
+      width: 40ch; 
+      max-height: 46vh;
+      overflow: auto; 
+      padding: 12px 16px; 
+      border-radius: 3px;
+      background: var(--panel); 
+      color: var(--ink); 
+      line-height: 1.3;
+      border: 1px solid var(--stroke);
+      box-shadow: 0 1px 4px var(--shadow);
+      font-family: "Computer Modern", "Latin Modern Math", "CMU Serif", monospace;
+    }
+    
+    /* Individual trace entry styling */
+    .traceline { 
+      margin: 0 0 6px 0; 
+    }
+    
+    /* Timestamp styling in trace entries */
+    .tracetime { 
+      opacity: 0.7; 
+      font-variant-numeric: tabular-nums; 
+      margin-right: 8px; 
+      color: var(--text-light);
+    }
+
+    /* Text labels displayed below nodes */
+    .nodetext {
+      font-size: 13px;
+      fill: var(--accent);
+      text-anchor: middle;
+      dominant-baseline: hanging;
+      pointer-events: none;
+      font-weight: 500;
+    }
+
+    /* --- Modal overlay --- */
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: var(--panel);
+      border-radius: 8px;
+      border: 1px solid var(--stroke);
+      box-shadow: 0 4px 12px var(--shadow);
+      width: 90%;
+      max-width: 600px;
+      max-height: 80%;
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--stroke);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg);
+    }
+    
+    .modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: var(--ink);
+    }
+    
+    .close {
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      color: var(--text-light);
+      line-height: 1;
+    }
+    
+    .close:hover {
+      color: var(--accent);
+    }
+    
+    .modal-body {
+      padding: 20px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    
+    .example-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid var(--stroke);
+      border-radius: 4px;
+      margin-bottom: 8px;
+      background: var(--node);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    
+    .example-item:hover {
+      background: var(--bg);
+      border-color: var(--stroke-strong);
+    }
+    
+    .example-name {
+      font-weight: 500;
+      color: var(--ink);
+    }
+    
+    .example-desc {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    
+    .example-load {
+      background: var(--quantum);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .example-load:hover {
+      background: var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Top control panel: playback and file controls -->
+  <div class="controlpanel">
+    <!-- File selection and management -->
+    <div class="control-row">
+      <input id="filePicker" type="file" accept=".json,.ndjson" style="display:none" />
+      <button id="pickLocal" type="button">Choose local…</button>
+      <button id="loadExamples" type="button">Load Examples</button>
+      <button id="resetBtn" type="button">↺ Reset</button>
+    </div>
+
+    <!-- Playback and control section -->
+    <div class="control-row">
+      <button id="prevStep">Prev ◀</button>
+      <button id="playPause">Play</button>
+      <button id="nextStep">Next ▶</button>
+      
+      <!-- Speed control -->
+      <label style="margin-left:16px">
+        speed
+        <input id="speed" type="range" min="0.01" max="10" step="0.01" value="0.01"/>
+        <small id="speedVal">0.01</small>
+      </label>
+      
+      <!-- Time scrubbing and display -->
+      <input id="scrub" type="range" min="0" max="1" step="1" value="0" style="margin-left:16px" />
+      <span id="timeLabel">t=0.0</span>
+    </div>
+  </div>
+
+  <!-- Event trace panel -->
+  <div class="tracepanel" id="tracepanel"></div>
+  
+  <!-- Main visualization canvas -->
+  <svg id="viz"></svg>
+
+  <!-- Examples Modal -->
+  <div id="examplesModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Load Pre-loaded Examples</h3>
+        <span class="close" id="closeModal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>Select an example to load:</p>
+        <div id="examplesList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D3.js library for data visualization and DOM manipulation -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  
+  <script>
+    (async function() {
+      'use strict';
+
+      let events = [];
+
+      const CANVAS = { w: innerWidth, h: innerHeight };
+
+      // Node visual structure sizing
+      const NODE_W = 220;
+      const NODE_PAD = 8;
+      const HEADER_H = 30;
+      const BAY_H = 80;
+      const STORAGE_ROW_H = 60;
+      const STORAGE_PAD = 20;
+      const CORNER_R = 2;
+
+      // Qubit visualization parameters
+      const BIT_R = 9;
+      const BIT_SPACING = 40;
+      const ELL_PAD_X = 22;
+      const ELL_PAD_Y = 10;
+
+      // Communication channel offset
+      const CHAN_OFFSET = 12;
+
+      async function fetchText(url) {
+        const r = await fetch(url, { cache: 'no-cache' });
+        if (!r.ok) throw new Error(`Failed to fetch ${url}: ${r.status}`);
+        return await r.text();
+      }
+
+      function parseNdjson(txt) {
+        const trimmed = txt.trim();
+        return trimmed ? trimmed.split('\n').map(JSON.parse) : [];
+      }
+
+      /**
+       * Initialization of application state from the loaded events, 
+       * including parsing static structure and building timeline
+       */
+      function initializeFromEvents() {
+        playing = false; 
+        btn.textContent = 'Play';
+        t_ns = 0; 
+        stepIdx = 0;
+
+        state = createEmptyState();
+
+        chanG.selectAll('*').remove();
+        boxesG.selectAll('*').remove();
+        linkG.selectAll('*').remove();
+        pktG.selectAll('*').remove();
+        nodeTextG.selectAll('*').remove();
+
+        for (const e of events) {
+          if (e.type === 'createNode') {
+            state.nodes.set(e.label, { xPct: e.x, yPct: e.y });
+          } else if (e.type === 'createChannel') {
+            state.channels.push({ 
+              from: e.from, 
+              to: e.to, 
+              kind: (e.kind === 'custom' ? 'quantum' : e.kind) 
+            });
+          } else if (e.type === 'createBit') {
+            if (!state.bits.has(e.label)) state.bits.set(e.label, {});
+          }
+        }
+
+        computeNodeAnchors();
+
+        buildTimeline();
+
+        resetControls();
+      }
+
+      function buildTimeline() {
+        tMax = 0;
+        for (const e of events) {
+          if (e.t_ns != null) tMax = Math.max(tMax, e.t_ns);
+          if (e.t1_ns != null) tMax = Math.max(tMax, e.t1_ns);
+        }
+
+        // Collect all significant time points
+        const timeSet = new Set();
+        for (const e of events) {
+          if (e.t_ns != null) timeSet.add(e.t_ns);
+          if (e.t0_ns != null && e.t1_ns != null) {
+            const t0 = e.t0_ns, t1 = e.t1_ns;
+            timeSet.add(t0); 
+            timeSet.add(t1);
+            // Add intermediate frames (smooth animations)
+            const K = 2;
+            for (let k = 1; k <= K; k++) {
+              timeSet.add(Math.round(t0 + k * (t1 - t0) / (K + 1)));
+            }
+          }
+        }
+        timeArray = Array.from(timeSet).sort((a, b) => a - b);
+      }
+
+      function resetControls() {
+        scrub.max = tMax || 1;
+        scrub.step = 1;
+        scrub.value = 0;
+        updateTimeLabel();
+
+        tracePanel.innerHTML = '';
+        userScrolledUp = false;
+      }
+
+      function hashCode(s) {
+        let h = 0; 
+        for (let i = 0; i < s.length; i++) {
+          h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+        }
+        return h;
+      }
+
+      async function loadEventsFrom(url) {
+        const txt = await fetchText(url);
+        events = parseNdjson(txt);
+        if (currentFileEl) currentFileEl.textContent = `file: ${url}`;
+        initializeFromEvents();
+        render();
+      }
+
+
+      /**
+       * Attempt to discover JSON files in the current directory
+       * Works with simple directory listings from various HTTP servers
+       * @returns {Array<string>} List of discovered JSON/NDJSON files
+       */
+      // Root-relative path where running the main examples writes their JSON traces
+      const EXAMPLES_PATH = '/examples/example_traces/';
+
+      async function listJsonInDir() {
+        const html = await fetchText(EXAMPLES_PATH);
+        const links = Array.from(html.matchAll(/href="([^"]+)"/g)).map(m => m[1]);
+        const files = links
+          .filter(h => /\.json$|\.ndjson$/i.test(h))
+          .filter(h => !/^\?/.test(h) && !h.startsWith('..'))
+          .map(h => {
+            const decoded = decodeURIComponent(h);
+            // Return absolute path from server root
+            if (decoded.startsWith('/')) return decoded;
+            return EXAMPLES_PATH + decoded.replace(/^\.\/+/, '');
+          });
+
+        // Remove duplicates and sort
+        return Array.from(new Set(files)).sort();
+      }
+
+      /**
+       * Attempt to discover example JSON files from the examples directory
+       * @returns {Array<Object>} List of example files with metadata
+       */
+      async function listExampleFiles() {
+        try {
+          const html = await fetchText(EXAMPLES_PATH);
+          const links = Array.from(html.matchAll(/href="([^"]+)"/g)).map(m => m[1]);
+
+          const files = links
+            .filter(h => /\.json$|\.ndjson$/i.test(h))
+            .filter(h => !/^\?/.test(h) && !h.startsWith('..'))
+            .map(h => {
+              const decodedHref = decodeURIComponent(h);
+              const filename = decodedHref.replace(/^\.\/+/, '').split('/').pop();
+
+              // Build an absolute-from-root path 
+              let filePath;
+              if (h.startsWith('/')) {
+                filePath = h;
+              } else {
+                filePath = EXAMPLES_PATH + h.replace(/^\.\/+/, '');
+              }
+              
+              return {
+                filename,
+                path: filePath,
+                displayName: filename
+                  .replace(/\.json$/i, '')
+                  .replace(/_/g, ' ')
+                  .replace(/example/i, '')
+                  .replace(/\s+/g, ' ')
+                  .replace(/^\s+|\s+$/g, '')
+                  .replace(/\d{8}_\d{6}$/, '')
+                  .replace(/[-\s]+$/, '')
+                  .trim(),
+                description: getExampleDescription(filename)
+              };
+            });
+          
+          return files.sort((a, b) => a.displayName.localeCompare(b.displayName));
+        } catch (error) {
+          console.warn('Could not load examples:', error);
+          return [];
+        }
+      }
+
+      /**
+       * Get a human-readable description for an example file
+       * @param {string} filename - The example filename
+       * @returns {string} Description of the example
+       */
+      function getExampleDescription(filename) {
+        const descriptions = [
+          [/entanglement.distribution/i, 'Bell-pair distribution across a fully-connected network of nodes'],
+          [/ghz/i,                       'GHZ state generation and qubit distribution to remote nodes'],
+          [/graph.?state/i,              'Distributed graph state generation with centralized orchestration'],
+          [/teleport/i,                  'Quantum teleportation of a qubit using EPR pair and classical corrections'],
+        ];
+
+        for (const [pattern, desc] of descriptions) {
+          if (pattern.test(filename)) return desc;
+        }
+
+        return 'Quantum network simulation example';
+      }
+
+  // --- wiring for the picker / drag-drop ---
+  const currentFileEl= document.getElementById('currentFile');
+  const pickLocalBtn = document.getElementById('pickLocal');
+  const filePicker   = document.getElementById('filePicker');
+  const loadExamplesBtn = document.getElementById('loadExamples');
+  const examplesModal = document.getElementById('examplesModal');
+  const closeModal   = document.getElementById('closeModal');
+  const examplesList = document.getElementById('examplesList');
+
+  pickLocalBtn.onclick = () => filePicker.click();
+
+  document.getElementById('resetBtn').onclick = () => {
+    playing = false;
+    btn.textContent = 'Play';
+    events = [];
+    if (currentFileEl) currentFileEl.textContent = '';
+    const tracepanel = document.getElementById('tracepanel');
+    if (tracepanel) tracepanel.innerHTML = '';
+    initializeFromEvents();
+    render();
+  };
+
+  filePicker.onchange = async () => {
+    const f = filePicker.files && filePicker.files[0];
+    if (!f) return;
+    const txt = await f.text();
+    events = parseNdjson(txt);
+    if (currentFileEl) currentFileEl.textContent = `file: ${f.name} (local)`;
+    initializeFromEvents();
+    render();
+  };
+
+  // Examples modal functionality
+  loadExamplesBtn.onclick = async () => {
+    const examples = await listExampleFiles();
+    populateExamplesList(examples);
+    examplesModal.style.display = 'flex';
+  };
+
+  closeModal.onclick = () => {
+    examplesModal.style.display = 'none';
+  };
+
+  // Close modal when clicking outside
+  examplesModal.onclick = (e) => {
+    if (e.target === examplesModal) {
+      examplesModal.style.display = 'none';
+    }
+  };
+
+  function populateExamplesList(examples) {
+    examplesList.innerHTML = '';
+    
+    if (examples.length === 0) {
+      examplesList.innerHTML = '<p style="text-align: center; color: var(--text-light);">No examples found. Make sure the examples directory is accessible.</p>';
+      return;
+    }
+
+    examples.forEach(example => {
+      const item = document.createElement('div');
+      item.className = 'example-item';
+      
+      item.innerHTML = `
+        <div>
+          <div class="example-name">${example.displayName}</div>
+          <div class="example-desc">${example.description}</div>
+        </div>
+        <button class="example-load">Load</button>
+      `;
+      
+      const loadBtn = item.querySelector('.example-load');
+      loadBtn.onclick = async (e) => {
+        e.stopPropagation();
+        try {
+          playing = false;
+          btn.textContent = 'Play';
+          await loadEventsFrom(example.path);
+          examplesModal.style.display = 'none';
+          if (currentFileEl) currentFileEl.textContent = `example: ${example.displayName}`;
+        } catch (error) {
+          alert(`Failed to load example: ${error.message}`);
+        }
+      };
+      
+      examplesList.appendChild(item);
+    });
+  }
+
+  // Drag & drop support
+  document.addEventListener('dragover', (e)=> { e.preventDefault(); });
+  document.addEventListener('drop', async (e)=>{
+    e.preventDefault();
+    const f = e.dataTransfer?.files?.[0];
+    if (!f) return;
+    const txt = await f.text();
+    events = parseNdjson(txt);
+    currentFileEl.textContent = `file: ${f.name} (local)`;
+    initializeFromEvents();
+    render();
+  });
+
+  // Handle ?file= URL param on load
+  (async () => {
+    const qf = new URLSearchParams(location.search).get('file');
+    if (qf) await loadEventsFrom(qf);
+  })();
+
+
+      /*
+       * Supported v1 schema events:
+       * 
+       * Static Structure:
+       * - createNode {label, x, y}              : Create a network node at position (x%, y%)
+       * - createChannel {from, to, kind}        : Create communication channel ("classical"|"quantum")
+       * - createBit {node, label, kind, color}  : Create a qubit at specified node
+       * 
+       * Quantum Operations:
+       * - entangle {bits: [labels...]}          : Create entanglement between multiple qubits
+       * - measure {bit, t_ns, basis?, b0?}      : Generic measurement (simple qubit removal)
+       * - graphMeasure {bit, t_ns, basis?, supportNode?} : Graph state measurement with transformations
+       *   - basis/measurementBasis/base/measurement_basis: "X"|"Y"|"Z" (default: "Z") - measurement basis
+       *   - supportNode/b0/support_node/ancilla: support node for X measurements (optional, auto-selects if not provided)
+       * - setBitColor {bit, color}              : Change visual representation
+       * 
+       * Communication:
+       * - sendBit {bit, from, to, kind, t0_ns, t1_ns}    : Transfer qubit between nodes
+       * - sendPacket {from, to, label, t0_ns, t1_ns}     : Send classical packet
+       * 
+       * Tracing:
+       * - traceText {text}                            : Global trace entry
+       * - traceText {node, text}                      : Node-specific trace entry
+       */
+
+      let tMax = 0;
+      let timeArray = [];
+      
+      function buildTimelineFromEvents() {
+        // Find maximum simulation time
+        tMax = 0;
+        for (const e of events) {
+          if ('t_ns' in e) tMax = Math.max(tMax, e.t_ns);
+          if ('t0_ns' in e) tMax = Math.max(tMax, e.t1_ns ?? e.t0_ns);
+          if ('t1_ns' in e) tMax = Math.max(tMax, e.t1_ns);
+        }
+
+        // Collect all significant time points for smooth animation
+        const timeSet = new Set();
+        for (const e of events) {
+          if (e.t_ns != null) timeSet.add(e.t_ns);
+          if (e.t0_ns != null && e.t1_ns != null) {
+            const t0 = e.t0_ns, t1 = e.t1_ns;
+            timeSet.add(t0); 
+            timeSet.add(t1);
+            // Add intermediate frames for smooth motion visualization
+            const K = 3;
+            for (let k = 1; k <= K; k++) { 
+              const u = k / (K + 1); 
+              timeSet.add(Math.round(t0 + u * (t1 - t0))); 
+            }
+          }
+        }
+        timeArray = Array.from(timeSet).sort((a, b) => a - b);
+      }
+
+      // Create fast event lookup index by time
+      const eventsAt = new Map(); // ns -> Event[]
+      for (const e of events) {
+        const key = e.t_ns ?? e.t0_ns ?? 0;
+        (eventsAt.get(key) || eventsAt.set(key, []), eventsAt.get(key)).push(e);
+      }
+
+      let state = createEmptyState();
+
+      /**
+       * Create a fresh application state object
+       * @returns {Object} New state with empty collections and utility functions
+       */
+      function createEmptyState() {
+        const pal = d3.schemeTableau10.concat(d3.schemeCategory10);
+        
+        const colorOf = (label) => {
+          return '#8e44ad'; // Consistent purple for all qubits
+        };
+        
+        return {
+          nodes: new Map(),             // label -> {xPct, yPct, anchorTop?, cx?}
+          channels: [],                 // {from, to, kind}
+          bits: new Map(),              // bitLabel -> {node?, color?, kind?}
+          entanglementGraph: new Map(), // qubitLabel -> Set(entangled qubits)
+          colorOf
+        };
+      }
+
+      // Parse initial structure from events (nodes and channels)
+      for (const e of events) {
+        if (e.type === 'createNode') {
+          state.nodes.set(e.label, { xPct: e.x, yPct: e.y });
+        } else if (e.type === 'createChannel') {
+          state.channels.push({ 
+            from: e.from, 
+            to: e.to, 
+            kind: (e.kind === 'custom' ? 'quantum' : e.kind) 
+          });
+        }
+      }
+
+      computeNodeAnchors();
+
+      /**
+       * Add an entanglement link between two qubits
+       * Creates bidirectional connection in the entanglement graph
+       * @param {string} qubit1 - First qubit identifier
+       * @param {string} qubit2 - Second qubit identifier
+       */
+      function addEntanglementLink(qubit1, qubit2) {
+        if (!state.entanglementGraph.has(qubit1)) {
+          state.entanglementGraph.set(qubit1, new Set());
+        }
+        if (!state.entanglementGraph.has(qubit2)) {
+          state.entanglementGraph.set(qubit2, new Set());
+        }
+        state.entanglementGraph.get(qubit1).add(qubit2);
+        state.entanglementGraph.get(qubit2).add(qubit1);
+      }
+
+      /**
+       * Remove a qubit from the entanglement graph
+       * Breaks all entanglement connections involving this qubit
+       * @param {string} qubit - Qubit identifier to remove
+       */
+      function removeQubitFromGraph(qubit) {
+        if (state.entanglementGraph.has(qubit)) {
+          const connectedQubits = state.entanglementGraph.get(qubit);
+          for (const connected of connectedQubits) {
+            if (state.entanglementGraph.has(connected)) {
+              state.entanglementGraph.get(connected).delete(qubit);
+            }
+          }
+          state.entanglementGraph.delete(qubit);
+        }
+      }
+
+      /**
+       * Perform local complementation on a vertex in the entanglement graph
+       * This operation complements all edges between neighbors of the target vertex
+       * @param {string} target - Target vertex for local complementation
+       * @param {boolean} verbose - Whether to trace the operation
+       */
+      function localComplementation(target, verbose = true) {
+        if (!state.entanglementGraph.has(target)) {
+          if (verbose) console.log(`Warning: Node ${target} not found in entanglement graph`);
+          return;
+        }
+
+        const neighbors = Array.from(state.entanglementGraph.get(target));
+        if (verbose) {
+          console.log(`Performing local complementation on node ${target} with neighbors: [${neighbors.join(', ')}]`);
+        }
+
+        // For each pair of neighbors, toggle their connection
+        for (let i = 0; i < neighbors.length; i++) {
+          for (let j = i + 1; j < neighbors.length; j++) {
+            const neighbor1 = neighbors[i];
+            const neighbor2 = neighbors[j];
+
+            // Check if edge exists between neighbor1 and neighbor2
+            const hasEdge = state.entanglementGraph.has(neighbor1) && 
+                           state.entanglementGraph.get(neighbor1).has(neighbor2);
+
+            if (hasEdge) {
+              // Remove edge
+              state.entanglementGraph.get(neighbor1).delete(neighbor2);
+              state.entanglementGraph.get(neighbor2).delete(neighbor1);
+              if (verbose) console.log(`  Removed edge: ${neighbor1} <-> ${neighbor2}`);
+            } else {
+              // Add edge
+              if (!state.entanglementGraph.has(neighbor1)) {
+                state.entanglementGraph.set(neighbor1, new Set());
+              }
+              if (!state.entanglementGraph.has(neighbor2)) {
+                state.entanglementGraph.set(neighbor2, new Set());
+              }
+              state.entanglementGraph.get(neighbor1).add(neighbor2);
+              state.entanglementGraph.get(neighbor2).add(neighbor1);
+              if (verbose) console.log(`  Added edge: ${neighbor1} <-> ${neighbor2}`);
+            }
+          }
+        }
+      }
+
+      /**
+       * Perform Z measurement on a graph state node
+       * Simply removes the target node from the graph
+       * @param {string} target - Target qubit to measure
+       * @param {boolean} verbose - Whether to trace the operation
+       */
+      function graphZMeasurement(target, verbose = true) {
+        if (verbose) {
+          console.log(`** Graph State Z Measurement on node ${target} **`);
+        }
+        removeQubitFromGraph(target);
+      }
+
+      /**
+       * Perform Y measurement on a graph state node
+       * Applies local complementation on target, then removes it
+       * @param {string} target - Target qubit to measure
+       * @param {boolean} verbose - Whether to trace the operation
+       */
+      function graphYMeasurement(target, verbose = true) {
+        if (verbose) {
+          console.log(`** Graph State Y Measurement on node ${target} **`);
+        }
+        localComplementation(target, verbose);
+        removeQubitFromGraph(target);
+      }
+
+      /**
+       * Perform X measurement on a graph state node
+       * More complex operation involving support node selection and multiple local complementations
+       * @param {string} target - Target qubit to measure
+       * @param {string} supportNode - Optional support node (if not provided, chooses minimum neighbor)
+       * @param {boolean} verbose - Whether to trace the operation
+       */
+      function graphXMeasurement(target, supportNode = null, verbose = true) {
+        if (verbose) {
+          console.log(`** Graph State X Measurement on node ${target} **`);
+        }
+
+        if (!state.entanglementGraph.has(target)) {
+          if (verbose) console.log(`Node ${target} not found in graph`);
+          return;
+        }
+
+        const neighbors = Array.from(state.entanglementGraph.get(target)).sort();
+
+        if (neighbors.length > 0) {
+          // Determine support node
+          if (supportNode === null || !neighbors.includes(supportNode)) {
+            // Choose minimum label neighbor as support node
+            supportNode = neighbors[0];
+          }
+
+          if (verbose) {
+            console.log(`List of adjacent nodes: [${neighbors.join(', ')}], chosen ${supportNode} as support node...`);
+          }
+
+          // Perform the X measurement sequence
+          localComplementation(supportNode, verbose);
+          localComplementation(target, verbose);
+          removeQubitFromGraph(target);
+          localComplementation(supportNode, verbose);
+
+        } else {
+          // No neighbors, just remove the node
+          removeQubitFromGraph(target);
+          if (verbose) {
+            console.log(`Node ${target} has no adjacent nodes, removed from the graph...`);
+          }
+        }
+      }
+
+      /**
+       * Get the current visual position of a qubit
+       * Handles both stored qubits and in-flight qubits
+       * @param {string} qubit - Qubit identifier
+       * @param {Map} bounds - Node boundary information
+       * @param {Map} rowAnchors - Storage row positioning
+       * @returns {Object|null} Position object with x, y coordinates
+       */
+      function getQubitPosition(qubit, bounds, rowAnchors) {
+        // Check if qubit is currently in transit
+        for (const e of events) {
+          if (e.type === 'sendBit' && e.bit === qubit && t_ns >= e.t0_ns && t_ns <= e.t1_ns) {
+            const pos = posForSendBit(e, t_ns, bounds);
+            if (pos) {
+              console.log(`Qubit ${qubit} is in flight, position:`, pos);
+              return { x: pos.x, y: pos.y, cx: pos.x, cy: pos.y };
+            }
+          }
+        }
+
+        // Get position from node storage
+        const bitInfo = state.bits.get(qubit);
+        if (!bitInfo || !bitInfo.node) {
+          console.log(`No bit info for qubit ${qubit}`);
+          return null;
+        }
+        
+        const groups = entangleGroupsAtTime(t_ns);
+        for (const [root, members] of groups) {
+          if (members.includes(qubit)) {
+            const anchors = rowAnchors.get(bitInfo.node);
+            if (anchors && anchors.has(root)) {
+              const rowCenter = anchors.get(root);
+              
+              // Calculate position within entanglement group
+              if (members.length > 1) {
+                const nodeMembers = members.filter(m => state.bits.get(m)?.node === bitInfo.node);
+                const qubitIndex = nodeMembers.indexOf(qubit);
+                if (qubitIndex >= 0) {
+                  const n = nodeMembers.length;
+                  const totalW = (n - 1) * BIT_SPACING;
+                  const x = rowCenter.x - totalW / 2 + qubitIndex * BIT_SPACING;
+                  console.log(`Qubit ${qubit} in group storage at:`, { x: x, y: rowCenter.y });
+              return { x: x, y: rowCenter.y, cx: x, cy: rowCenter.y };
+            }
+          }
+          
+          // Single qubit or fallback to row center
+          console.log(`Qubit ${qubit} at row center:`, rowCenter);
+          return rowCenter;
+        }
+      }
+    }
+    
+    console.log(`Could not find position for qubit ${qubit}`);
+    return null;
+  }
+
+  // --- Union-Find for entanglement ---
+  class UF {
+    constructor(){ this.p=new Map(); this.r=new Map(); }
+    find(x){ if(!this.p.has(x)){ this.p.set(x,x); this.r.set(x,0); }
+             let px=this.p.get(x); if(px!==x){ px=this.find(px); this.p.set(x,px);} return px; }
+    union(a,b){ a=this.find(a); b=this.find(b); if(a===b) return;
+      const ra=this.r.get(a), rb=this.r.get(b);
+      if(ra<rb) this.p.set(a,b); else if(ra>rb) this.p.set(b,a);
+      else { this.p.set(b,a); this.r.set(a,ra+1); } }
+    groups() {
+      const g=new Map();
+      for (const x of this.p.keys()){ const r=this.find(x);
+        (g.get(r)||g.set(r,[]), g.get(r)).push(x);
+      }
+      return g;
+    }
+  }
+
+  function entangleGroupsAtTime(t_ns){
+    const uf = new UF();
+    for (const b of state.bits.keys()) uf.find(b);
+
+    for (const e of events) {
+      if (e.type !== 'entangle') continue;
+      if (e.t_ns > t_ns) break;
+      const list = e.bits.slice();
+      for (let i=1;i<list.length;i++) uf.union(list[0], list[i]);
+    }
+
+    const measured = new Set(
+      events.filter(e => e.type==='measure' && e.t_ns <= t_ns).map(e => e.bit)
+    );
+
+    const raw = uf.groups();                // Map<root -> [members...]>
+    const groups = new Map();
+
+    for (const [root, members] of raw) {
+      const kept = members.filter(b => !measured.has(b));
+      const cut  = members.filter(b =>  measured.has(b));
+
+      if (kept.length) {
+        // If root is measured, don't use it as the key for the kept bucket.
+        const keptKey = measured.has(root) ? kept[0] : root;
+        groups.set(keptKey, kept);
+      }
+      for (const b of cut) {
+        groups.set(b, [b]); // isolate each measured bit
+      }
+    }
+    return groups;
+  }
+
+
+  // --- Reducer: apply events up to t_ns ---
+  function reduceTo(t_ns){
+    // Reset dynamic pieces
+    state.bits.clear();
+    state.entanglementGraph.clear();
+    
+    // Re-apply creates & colors deterministically up to t_ns
+    for (const e of events) {
+      if (e.type === 'createBit' && e.t_ns <= t_ns) {
+        const bitLabel = e.label || e.bit; // Support both 'label' and 'bit' fields
+        // Use explicit color if provided, otherwise use default
+        const color = e.color || state.colorOf(bitLabel);
+        state.bits.set(bitLabel, { node: e.node, kind: e.kind, color });
+        console.log('Created bit:', bitLabel, 'at node:', e.node, 'color:', color);
+      } else if (e.type === 'setBitColor' && e.t_ns <= t_ns) {
+        const b = state.bits.get(e.bit); if (b) b.color = e.color;
+      } else if (e.type === 'sendBit' && e.t1_ns <= t_ns) {
+        // When a send finishes, snap bit to destination node
+        const b = state.bits.get(e.bit);
+        if (b) b.node = e.to;
+      } else if (e.type === 'entangle' && e.t_ns <= t_ns) {
+        // Process entanglement events: create links between all pairs
+        const qubits = e.bits;
+        console.log('Processing entangle event at t_ns =', e.t_ns, 'qubits:', qubits);
+        for (let i = 0; i < qubits.length; i++) {
+          for (let j = i + 1; j < qubits.length; j++) {
+            console.log(`Adding entanglement link: ${qubits[i]} <-> ${qubits[j]}`);
+            addEntanglementLink(qubits[i], qubits[j]);
+          }
+        }
+        // The trace should show the individual entanglement operations
+        // Note: In practice, the trace entries should be generated by the simulation
+        // showing "Entangled qubits: A <-> B" for each pair
+      } else if (e.type === 'measure' && e.t_ns <= t_ns) {
+        // Generic measurement - just removes the qubit without graph transformations
+        const target = e.bit;
+        console.log(`Processing generic measurement on qubit ${target}`);
+        removeQubitFromGraph(target);
+      } else if (e.type === 'graphMeasure' && e.t_ns <= t_ns) {
+        // Graph state measurement with transformations
+        const measurementBasis = e.basis || e.measurementBasis || e.base || e.measurement_basis || 'Z'; // Default to Z-basis
+        const target = e.bit;
+        const supportNode = e.supportNode || e.b0 || e.support_node || e.ancilla || null;
+        
+        console.log(`Processing graph state ${measurementBasis}-basis measurement on qubit ${target}${supportNode ? ` with support node ${supportNode}` : ''}`);
+        
+        switch (measurementBasis.toUpperCase()) {
+          case 'Z':
+            graphZMeasurement(target, true);
+            break;
+          case 'Y':
+            graphYMeasurement(target, true);
+            break;
+          case 'X':
+            graphXMeasurement(target, supportNode, true);
+            break;
+          default:
+            console.warn(`Unknown measurement basis: ${measurementBasis}, defaulting to Z measurement`);
+            graphZMeasurement(target, true);
+        }
+      }
+    }
+  }
+
+  // --- Geometry helpers ---
+  function nodeCenterPx(label){
+    const n = state.nodes.get(label);
+    return { cx: CANVAS.w * (n.xPct/100), cy: CANVAS.h * (n.yPct/100) };
+  }
+
+  function computeNodeLayout(){
+    // For each node, compute header/bay/storage rectangles & center
+    const bounds = new Map(); // label -> {header:{x,y,w,h}, bay:{...}, storage:{...}, cx, cy, bottom}
+    for (const [label, n] of state.nodes) {
+      const { cx, cy } = nodeCenterPx(label);
+
+      // Storage height depends on number of rows at current time; estimate after we know rows.
+      // First set a minimal storage height; we'll update after rows measured.
+      const minStorageH = STORAGE_ROW_H + 2*STORAGE_PAD;
+
+      const totalH = HEADER_H + BAY_H + minStorageH + 2*NODE_PAD;
+      const x = cx - NODE_W/2;
+      const y = cy - totalH/2;
+
+      const header = { x, y, w:NODE_W, h:HEADER_H };
+      const bayY   = y + HEADER_H;
+      const bay    = { x, y: bayY, w:NODE_W, h:BAY_H };
+      const storageY = bayY + BAY_H;
+      const storage  = { x, y: storageY, w:NODE_W, h: minStorageH };
+
+      bounds.set(label, { header, bay, storage, cx, cy, bottom: storageY + minStorageH });
+    }
+    return bounds;
+  }
+
+  // --- Channels ---
+  function channelEndpoints(from, to, kind, bounds){
+    const bA = bounds.get(from), bB = bounds.get(to);
+    
+    // Calculate bay centers
+    const bayA = { x: bA.bay.x + bA.bay.w/2, y: bA.bay.y + bA.bay.h/2 };
+    const bayB = { x: bB.bay.x + bB.bay.w/2, y: bB.bay.y + bB.bay.h/2 };
+    
+    // Calculate direction vector
+    const dx = bayB.x - bayA.x, dy = bayB.y - bayA.y, L = Math.hypot(dx, dy) || 1;
+    const dirX = dx / L, dirY = dy / L;
+    const nx = -dy / L, ny = dx / L; // perpendicular for offset
+    
+    // Calculate intersection points with node boundaries
+    const edgeA = calculateNodeEdgeIntersection(bayA, dirX, dirY, bA);
+    const edgeB = calculateNodeEdgeIntersection(bayB, -dirX, -dirY, bB);
+    
+    const off = (kind === 'quantum') ? +CHAN_OFFSET : -CHAN_OFFSET;
+    return { 
+      a: { x: edgeA.x + nx * off, y: edgeA.y + ny * off }, 
+      b: { x: edgeB.x + nx * off, y: edgeB.y + ny * off } 
+    };
+  }
+
+  // Calculate where a line from bay center intersects the node boundary
+  function calculateNodeEdgeIntersection(bayCenter, dirX, dirY, nodeBounds) {
+    const nodeLeft = nodeBounds.header.x;
+    const nodeRight = nodeBounds.header.x + nodeBounds.header.w;
+    const nodeTop = nodeBounds.header.y;
+    const nodeBottom = nodeBounds.storage.y + nodeBounds.storage.h;
+    
+    // Find intersection with node rectangle boundary
+    const candidates = [];
+    
+    // Left edge
+    if (dirX < 0) {
+      const t = (nodeLeft - bayCenter.x) / dirX;
+      const y = bayCenter.y + t * dirY;
+      if (y >= nodeTop && y <= nodeBottom) candidates.push({ x: nodeLeft, y });
+    }
+    
+    // Right edge  
+    if (dirX > 0) {
+      const t = (nodeRight - bayCenter.x) / dirX;
+      const y = bayCenter.y + t * dirY;
+      if (y >= nodeTop && y <= nodeBottom) candidates.push({ x: nodeRight, y });
+    }
+    
+    // Top edge
+    if (dirY < 0) {
+      const t = (nodeTop - bayCenter.y) / dirY;
+      const x = bayCenter.x + t * dirX;
+      if (x >= nodeLeft && x <= nodeRight) candidates.push({ x, y: nodeTop });
+    }
+    
+    // Bottom edge
+    if (dirY > 0) {
+      const t = (nodeBottom - bayCenter.y) / dirY;
+      const x = bayCenter.x + t * dirX;
+      if (x >= nodeLeft && x <= nodeRight) candidates.push({ x, y: nodeBottom });
+    }
+    
+    // Return the closest valid intersection, or bay center as fallback
+    return candidates.length > 0 ? candidates[0] : bayCenter;
+  }
+
+
+  function drawChannels(chanG, bounds){
+    const data = state.channels.map(e => {
+      const bA = bounds.get(e.from), bB = bounds.get(e.to);
+      if (!bA || !bB) return null;
+      
+      const { a, b } = channelEndpoints(e.from, e.to, e.kind, bounds);
+      
+      return {
+        id:`${e.from}-${e.to}-${e.kind}`,
+        x1: a.x, y1: a.y,
+        x2: b.x, y2: b.y,
+        kind:e.kind
+      };
+    }).filter(Boolean);
+
+    const sel = chanG.selectAll('line.chan').data(data, d=>d.id);
+    sel.join(
+      enter => enter.append('line')
+        .attr('class', d => `chan ${d.kind}`)
+        .attr('x1', d=>d.x1).attr('y1', d=>d.y1)
+        .attr('x2', d=>d.x2).attr('y2', d=>d.y2),
+      update => update
+        .attr('x1', d=>d.x1).attr('y1', d=>d.y1)
+        .attr('x2', d=>d.x2).attr('y2', d=>d.y2),
+      exit => exit.remove()
+    );
+  }
+
+
+  // --- Storage rows ---
+  function computeNodeAnchors(){
+    const MIN_STORAGE_H = STORAGE_ROW_H + 2*STORAGE_PAD;
+    const BASE_H        = HEADER_H + BAY_H + MIN_STORAGE_H + 2*NODE_PAD;
+
+    for (const [label, n] of state.nodes) {
+        const cx = CANVAS.w * (n.xPct/100);
+        const cy = CANVAS.h * (n.yPct/100);
+        // Fix the node’s top edge based on the minimal box; future growth extends downward
+        n.anchorTop = cy - BASE_H/2;
+        n.cx = cx; // optional cache
+    }
+  }
+
+  function rowsForNode(label, groups, inflightBits = new Set(), removedBits = new Set()){
+      const rows = [];
+
+    for (const [root, members] of groups) {
+      const local = members
+        .filter(b => state.bits.get(b)?.node === label)
+        .filter(b => !removedBits.has(b))
+        .filter(b => !inflightBits.has(b));  // hide in-flight bit from storage
+      if (!local.length) continue;
+      rows.push({ type: (local.length>=2 ? 'group' : 'single'), bits: local, groupId: root });
+    }
+    rows.sort((a,b)=> (a.type===b.type) ? (a.bits[0] < b.bits[0] ? -1 : 1) : (a.type==='group' ? -1 : 1));
+    return rows;
+  }
+
+
+  function layoutAndDrawNodes(boxesG, linkG, t_ns, inflightBits, removedBits){
+    const groups = entangleGroupsAtTime(t_ns);
+
+    // measure rows & heights
+    const rowsMap   = new Map();   // node -> rows[]
+    const heights   = new Map();   // node -> storageH
+    const rowAnchors= new Map();   // node -> Map(groupId -> {x,y})
+
+    for (const [label, node] of state.nodes) {
+      const rows = rowsForNode(label, groups, inflightBits, removedBits);
+      rowsMap.set(label, rows);
+
+      const storageH = Math.max(STORAGE_ROW_H * Math.max(1, rows.length) + 2*STORAGE_PAD,
+                                STORAGE_ROW_H + 2*STORAGE_PAD);
+      heights.set(label, storageH);
+    }
+
+    // bounds anchored at top...
+    const bounds = new Map();
+    for (const [label, node] of state.nodes) {
+      const cx = CANVAS.w * (node.xPct/100);
+      const minStorageH = STORAGE_ROW_H + 2*STORAGE_PAD;
+      const baseH = HEADER_H + BAY_H + minStorageH + 2*NODE_PAD;
+      const cy = CANVAS.h * (node.yPct/100);
+      const top = (node.anchorTop != null) ? node.anchorTop : (cy - baseH/2);
+
+      const x = cx - NODE_W/2;
+      const storageH = heights.get(label);
+
+      const headerY  = top;
+      const bayY     = headerY + HEADER_H;
+      const storageY = bayY + BAY_H;
+
+      const header  = { x, y: headerY,  w:NODE_W, h:HEADER_H };
+      const bay     = { x, y: bayY,     w:NODE_W, h:BAY_H };
+      const storage = { x, y: storageY, w:NODE_W, h:storageH };
+
+      const totalH  = HEADER_H + BAY_H + storageH + 2*NODE_PAD;
+      const bottom  = top + totalH;
+
+      bounds.set(label, { header, bay, storage, cx, cy: top + totalH/2, bottom });
+
+      // compute row anchors (center x, row y) for this node now that we know storage.y
+      const anchors = new Map();
+      const yStart = storage.y + STORAGE_PAD + STORAGE_ROW_H/2;
+      const rows = rowsMap.get(label) || [];
+      rows.forEach((row, idx) => {
+        const y = yStart + idx * STORAGE_ROW_H;
+        anchors.set(row.groupId, { x: storage.x + storage.w/2, y });
+      });
+      rowAnchors.set(label, anchors);
+    }
+
+    // ---- 3) Draw node boxes & rows (use precomputed rows) ----
+    const nodeIds = Array.from(state.nodes.keys());
+    const nodeBoxG = boxesG.selectAll('g.nodeBox').data(nodeIds, d=>d);
+
+    const e = nodeBoxG.enter().append('g').attr('class','nodeBox');
+    e.append('rect').attr('class','nodeRect').attr('rx', CORNER_R).attr('ry', CORNER_R); // header
+    e.append('rect').attr('class','nodeRect').attr('rx', CORNER_R).attr('ry', CORNER_R); // bay
+    e.append('rect').attr('class','nodeRect').attr('rx', CORNER_R).attr('ry', CORNER_R); // storage
+    e.append('text').attr('class','nodeHeader').attr('text-anchor','middle');
+    e.append('text').attr('class','sectionLabel bayLabel');
+    e.append('text').attr('class','sectionLabel storageLabel');
+
+    const m = e.merge(nodeBoxG);
+    m.each(function(label){
+      const g = d3.select(this);
+      const b = bounds.get(label);
+
+      // sections
+      g.select('rect.nodeRect:nth-of-type(1)')
+        .attr('x', b.header.x).attr('y', b.header.y)
+        .attr('width', b.header.w).attr('height', b.header.h);
+
+      g.select('rect.nodeRect:nth-of-type(2)')
+        .attr('x', b.bay.x).attr('y', b.bay.y)
+        .attr('width', b.bay.w).attr('height', b.bay.h);
+
+      g.select('rect.nodeRect:nth-of-type(3)')
+        .attr('x', b.storage.x).attr('y', b.storage.y)
+        .attr('width', b.storage.w).attr('height', b.storage.h);
+
+      // labels
+      g.select('text.nodeHeader')
+        .attr('x', b.cx)
+        .attr('y', b.header.y + NODE_PAD + 12)
+        .text(label);
+
+      g.select('text.bayLabel')
+        .attr('x', b.bay.x + NODE_PAD)
+        .attr('y', b.bay.y + 12)
+        .text('Communication Bay');
+
+      g.select('text.storageLabel')
+        .attr('x', b.storage.x + NODE_PAD)
+        .attr('y', b.storage.y + 12)
+        .text('Local Storage');
+
+      // storage rows (already filtered for inflight bits)
+      drawStorageRows(g, b.storage, rowsMap.get(label));
+    });
+
+    nodeBoxG.exit().remove();
+
+    return { bounds, groups, rowAnchors};
+  }
+
+  function drawStorageRows(nodeG, storageRect, rows){
+      nodeG.selectAll('g.storageRow').remove();   // clears rows + their wave patterns
+
+  const yStart = storageRect.y + STORAGE_PAD + STORAGE_ROW_H/2;
+    rows.forEach((row, idx)=>{
+      const rg = nodeG.append('g').attr('class','storageRow');
+      const y = yStart + idx * STORAGE_ROW_H;
+      const cx = storageRect.x + storageRect.w/2;
+
+      if (row.type === 'group') {
+        const n = row.bits.length;
+        const totalW = (n-1)*BIT_SPACING;
+        const xs = Array.from({length:n}, (_,i)=> cx - totalW/2 + i*BIT_SPACING);
+        const col = state.bits.get(row.bits[0])?.color || state.colorOf(row.bits[0]);
+
+        // Show row label without wave pattern background
+        rg.append('text').attr('class','rowLabel')
+          .attr('x', cx).attr('y', y - (BIT_R + 14))
+          .attr('text-anchor','middle').text(row.bits.join(', '));
+
+        xs.forEach((x,i)=>{
+          const b = row.bits[i];
+          const c = state.bits.get(b)?.color || state.colorOf(b);
+          rg.append('circle').attr('class','bit').attr('r', BIT_R)
+            .attr('cx', x).attr('cy', y).attr('fill', c)
+            .attr('stroke', 'var(--stroke-strong)').attr('stroke-width', 1.5);
+        });
+      } else {
+        const bit = row.bits[0];
+        const col = state.bits.get(bit)?.color || state.colorOf(bit);
+        rg.append('text').attr('class','rowLabel')
+          .attr('x', cx).attr('y', y - (BIT_R + 22)).attr('text-anchor','middle')
+          .text(bit);
+        rg.append('circle').attr('class','bit').attr('r', BIT_R)
+          .attr('cx', cx).attr('cy', y).attr('fill', col);
+        rg.insert('circle', ':first-child')  // subtle halo
+          .attr('r', BIT_R + 6).attr('cx', cx).attr('cy', y)
+          .attr('fill','none').attr('stroke', col).attr('stroke-opacity', 0.28).attr('stroke-width', 2);
+      }
+    });
+  }
+
+
+  // --- Qubit entanglement links ---
+  function drawQubitEntanglementLinks(linkG, bounds, rowAnchors, removedBits = new Set()){
+    const linkData = [];
+    
+    // Debug: Trace the current state of the entanglement graph
+    if (Object.keys(state.entanglementGraph).length > 0) {
+      console.log('Entanglement graph at t_ns =', t_ns, ':', state.entanglementGraph);
+    }
+    
+    // Process each qubit and its entangled partners
+    for (const [qubit1, entangledQubits] of state.entanglementGraph) {
+      if (removedBits.has(qubit1)) continue;
+      
+      const pos1 = getQubitPosition(qubit1, bounds, rowAnchors);
+      if (!pos1) {
+        continue;
+      }
+      
+      for (const qubit2 of entangledQubits) {
+        if (removedBits.has(qubit2)) continue;
+        if (qubit1 >= qubit2) continue; // Only draw each link once
+        
+        const pos2 = getQubitPosition(qubit2, bounds, rowAnchors);
+        if (!pos2) {
+          continue;
+        }
+        
+        const color1 = state.bits.get(qubit1)?.color || state.colorOf(qubit1);
+        const color2 = state.bits.get(qubit2)?.color || state.colorOf(qubit2);
+        
+        console.log(`Creating entanglement link: ${qubit1} <-> ${qubit2}`);
+        
+        linkData.push({
+          id: `entangle-${qubit1}-${qubit2}`,
+          d: wiggly(pos1, pos2),
+          color: color1, // Use color of first qubit
+          qubit1: qubit1,
+          qubit2: qubit2
+        });
+      }
+    }
+
+    console.log('LinkData:', linkData);
+
+    const sel = linkG.selectAll('path.qubitLink').data(linkData, d => d.id);
+    sel.join(
+      enter => enter.append('path')
+        .attr('class', 'entanglementWave qubitLink')
+        .attr('stroke', d => d.color)
+        .attr('d', d => d.d)
+        .append('title') // Add tooltip showing which qubits are linked
+        .text(d => `Entangled: ${d.qubit1} <-> ${d.qubit2}`),
+      update => update
+        .attr('stroke', d => d.color)
+        .attr('d', d => d.d)
+        .select('title')
+        .text(d => `Entangled: ${d.qubit1} <-> ${d.qubit2}`),
+      exit => exit.remove()
+    );
+  }
+
+  // --- Cross-node entanglement ---
+  function drawEntanglementLinks(linkG, bounds, groups, rowAnchors, removedBits = new Set()){
+    // inflight positions
+    const inflightPos = new Map();
+    for (const e of events) {
+      if (e.type!=='sendBit') continue;
+      if (t_ns < e.t0_ns || t_ns > e.t1_ns) continue;
+      const p = posForSendBit(e, t_ns, bounds);
+      if (!p) continue;
+      const col = state.bits.get(e.bit)?.color || state.colorOf(e.bit);
+      inflightPos.set(e.bit, { x:p.x, y:p.y, color:col });
+    }
+
+    const linkData = [];
+    for (const [root, members] of groups) {
+      const endpoints = [];
+
+      // node-row endpoints: use actual row center if present for this group
+      const nodesSeen = new Set();
+      for (const m of members) {
+        const node = state.bits.get(m)?.node;
+        if (!node) continue;
+        if (inflightPos.has(m)) continue; // this member is moving; don't count it as stored
+        if (nodesSeen.has(node)) continue;
+
+        const b  = bounds.get(node);
+        const ra = rowAnchors.get(node)?.get(root);
+        if (!b || !ra) continue;
+        const color = state.bits.get(m)?.color || state.colorOf(m);
+        endpoints.push({ x: ra.x, y: ra.y, color });
+        nodesSeen.add(node);
+      }
+
+      // inflight endpoints: one per moving member
+      for (const m of members) {
+        const p = inflightPos.get(m);
+        if (p) endpoints.push({ x:p.x, y:p.y, color:p.color, inflight:true });
+      }
+
+      if (endpoints.length <= 1) continue;
+
+      endpoints.sort((a,b)=> a.x - b.x);
+      for (let i=0;i<endpoints.length-1;i++){
+        const A = endpoints[i], B = endpoints[i+1];
+        linkData.push({
+          id:`${root}-${i}-${Math.round(A.x)}-${Math.round(B.x)}`,
+          d: wiggly({cx:A.x, cy:A.y}, {cx:B.x, cy:B.y}),
+          color: A.color
+        });
+      }
+    }
+
+    const sel = linkG.selectAll('path.groupLink').data(linkData, d=>d.id);
+    sel.join(
+      enter => enter.append('path')
+        // give both classes so CSS for entanglementWave applies to inter-node links too
+        .attr('class','entanglementWave groupLink')
+        .attr('stroke', d=>d.color).attr('d', d=>d.d),
+      update => update.attr('stroke', d=>d.color).attr('d', d=>d.d),
+      exit   => exit.remove()
+    );
+  }
+
+
+  function wiggly(a, b, amp=10, waves=3){
+    const dx=b.cx-a.cx, dy=b.cy-a.cy, L=Math.hypot(dx,dy);
+    if (L < 1e-2) return `M${a.cx},${a.cy} L${b.cx},${b.cy}`;
+    const nx=-dy/L, ny=dx/L;
+    const steps=20; let d=`M${a.cx},${a.cy}`;
+    for (let i=1;i<=steps;i++){
+      const s=i/steps, x=a.cx+dx*s, y=a.cy+dy*s;
+      const off = Math.sin(s*Math.PI*2*waves)*amp;
+      d += ` L${x+nx*off},${y+ny*off}`;
+    }
+    return d + ` L${b.cx},${b.cy}`;
+  }
+
+  // --- In-flight positions ---
+  function posForSendBit(evt, t_ns, bounds){
+    if (t_ns < evt.t0_ns || t_ns > evt.t1_ns) return null;
+    const u = (t_ns - evt.t0_ns) / (evt.t1_ns - evt.t0_ns);
+    const UP=0.2, ACROSS=0.6, DOWN=0.2;
+
+    const src = bounds.get(evt.from), dst = bounds.get(evt.to);
+    if (!src || !dst) return null;
+
+    const srcStore = { x: src.cx, y: src.storage.y + src.storage.h/2 };
+    const srcBay   = { x: src.bay.x + src.bay.w/2, y: src.bay.y + src.bay.h/2 };
+    const dstBay   = { x: dst.bay.x + dst.bay.w/2, y: dst.bay.y + dst.bay.h/2 };
+    const dstStore = { x: dst.cx, y: dst.storage.y + dst.storage.h/2 };
+
+    const { a:ch0, b:ch1 } = channelEndpoints(evt.from, evt.to, evt.kind, bounds);
+
+    if (u <= UP){
+      const v = u/UP;
+      return { x: srcStore.x*(1-v)+srcBay.x*v, y: srcStore.y*(1-v)+srcBay.y*v };
+    } else if (u <= UP+ACROSS){
+      const v = (u-UP)/ACROSS;
+      return { x: ch0.x*(1-v)+ch1.x*v, y: ch0.y*(1-v)+ch1.y*v };
+    } else {
+      const v = (u-UP-ACROSS)/DOWN;
+      return { x: dstBay.x*(1-v)+dstStore.x*v, y: dstBay.y*(1-v)+dstStore.y*v };
+    }
+  }
+
+  function posForPacket(evt, t_ns, bounds){
+    if (t_ns < evt.t0_ns || t_ns > evt.t1_ns) return null;
+    const u = (t_ns - evt.t0_ns) / (evt.t1_ns - evt.t0_ns);
+
+    // A packet may travel in the reverse direction from how the channel was registered.
+    // Always derive the perpendicular offset from the *canonical* (stored) channel direction
+    // so the packet stays on the correct channel line and not the quantum one.
+    const chan = state.channels.find(c => c.kind === 'classical' &&
+      ((c.from === evt.from && c.to === evt.to) ||
+       (c.from === evt.to   && c.to === evt.from)));
+    const canonFrom = chan ? chan.from : evt.from;
+    const canonTo   = chan ? chan.to   : evt.to;
+    const reversed  = !!chan && chan.from === evt.to;
+
+    const { a, b } = channelEndpoints(canonFrom, canonTo, 'classical', bounds);
+    // If the packet travels opposite to the channel definition, interpolate b→a
+    if (reversed) {
+      return { x: b.x*(1-u)+a.x*u, y: b.y*(1-u)+a.y*u };
+    }
+    return { x: a.x*(1-u)+b.x*u, y: a.y*(1-u)+b.y*u };
+  }
+
+
+  // --- Draw moving objects ---
+  function drawInflightBits(linkG, bounds, t_ns, removedBits = new Set()){
+    const flights = events
+      .filter(e => e.type==='sendBit' && t_ns>=e.t0_ns && t_ns<=e.t1_ns)
+      .filter(e => !removedBits.has(e.bit))
+      .map(e => {
+        const p = posForSendBit(e, t_ns, bounds);
+        if (!p) return null;
+        const col = state.bits.get(e.bit)?.color || state.colorOf(e.bit);
+        return { id:`bit-${e.bit}-${e.t0_ns}`, x:p.x, y:p.y, color:col, label:e.bit };
+      })
+      .filter(Boolean);
+
+    const sel = linkG.selectAll('g.inflight').data(flights, d=>d.id);
+
+    const enter = sel.enter().append('g').attr('class','inflight');
+    enter.append('circle')
+        .attr('r',  BIT_R-3)
+        .attr('stroke','#fff').attr('stroke-width',1);
+    enter.append('text')
+        .attr('class','rowLabel')
+        .attr('text-anchor','middle')
+        .attr('dy', - (BIT_R + 8));     // label above the moving dot
+
+    sel.merge(enter)
+      .attr('transform', d => `translate(${d.x},${d.y})`)
+      .select('circle').attr('fill', d=>d.color);
+
+    sel.merge(enter)
+      .select('text').text(d => d.label);
+
+    sel.exit().remove();
+  }
+
+
+  function drawPackets(pktG, bounds, t_ns){
+    const pkts = events.filter(e => e.type==='sendPacket' && t_ns>=e.t0_ns && t_ns<=e.t1_ns)
+      .map(e => {
+        const p = posForPacket(e, t_ns, bounds);
+        if (!p) return null;
+        return { id:`pkt-${e.from}-${e.to}-${e.t0_ns}`, x:p.x, y:p.y, label:(e.label||'') };
+      }).filter(Boolean);
+
+    const p = pktG.selectAll('g.pktg').data(pkts, d=>d.id);
+    const pe = p.enter().append('g').attr('class','pktg');
+    pe.append('circle').attr('class','pkt').attr('r',8);
+    pe.append('text').attr('class','label').attr('dy', -12).attr('text-anchor','middle');
+    p.merge(pe).attr('transform', d=>`translate(${d.x},${d.y})`);
+    p.merge(pe).select('text.label').text(d=>d.label);
+    p.exit().remove();
+  }
+
+  // --- Node-local text ---
+  function drawNodeText(nodeTextG, bounds, stepT){
+    const msgs = eventsAt.get(stepT) || [];
+    const nodeMsgs = msgs.filter(e => e.type==='traceText' && e.node);
+    const ann = [];
+    for (const e of nodeMsgs) {
+      const b = bounds.get(e.node); if (!b) continue;
+      // If multiple for same node, stack
+      const existing = ann.filter(a => a.node === e.node).length;
+      ann.push({ id:`${e.node}-${stepT}-${existing}`, node:e.node, x:b.cx, y:b.bottom + 10 + existing*16, text:e.text });
+    }
+    const sel = nodeTextG.selectAll('text.nodetext').data(ann, d=>d.id);
+    sel.join(
+      enter => enter.append('text').attr('class','nodetext')
+        .attr('x', d=>d.x).attr('y', d=>d.y).text(d=>d.text),
+      update => update.attr('x', d=>d.x).attr('y', d=>d.y).text(d=>d.text),
+      exit   => exit.remove()
+    );
+  }
+
+  // --- Trace panel ---
+  const tracePanel = document.getElementById('tracepanel');
+  let userScrolledUp = false;
+  tracePanel.addEventListener('scroll', () => {
+    const atBottom = tracePanel.scrollTop + tracePanel.clientHeight >= tracePanel.scrollHeight - 4;
+    userScrolledUp = !atBottom;
+  });
+
+  function drawTracePanel(t_ns){
+    const shown = events.filter(e => e.type==='traceText' && !e.node && e.t_ns <= t_ns).slice(-120);
+    tracePanel.innerHTML = '';
+    for (const e of shown) {
+      const p = document.createElement('p');
+      p.className = 'traceline';
+      const ts = (e.t_ns/1e3).toFixed(6);
+      p.innerHTML = `<span class="tracetime">[${ts} µs]</span>${e.text}`;
+      tracePanel.appendChild(p);
+    }
+    if (!userScrolledUp) tracePanel.scrollTop = tracePanel.scrollHeight;
+  }
+
+  // --- Scene & layers ---
+  const svg = d3.select('#viz');
+  const chanG     = svg.append('g').attr('class','layer-channels');
+  const boxesG    = svg.append('g').attr('class','layer-nodeboxes');
+  const linkG     = svg.append('g').attr('class','layer-links');     // entanglement + inflight bits
+  const pktG      = svg.append('g').attr('class','layer-packets');   // packets
+  const nodeTextG = svg.append('g').attr('class','layer-nodeText');  // node-local text
+
+  // --- Controls ---
+  const scrub = document.getElementById('scrub');
+  const lbl   = document.getElementById('timeLabel');
+  const btn   = document.getElementById('playPause');
+  const prev  = document.getElementById('prevStep');
+  const next  = document.getElementById('nextStep');
+  const speedCtl = document.getElementById('speed');
+  const speedVal = document.getElementById('speedVal');
+
+  scrub.max = tMax || 1; scrub.step = 1; scrub.value = 0;
+  speedVal.textContent = speedCtl.value + " (µs/s)";
+  speedCtl.oninput = () => { speedVal.textContent = speedCtl.value + " (µs/s)"; };
+
+  let playing=false, t_ns=0, last=performance.now();
+  let stepIdx = 0;
+
+  function currentStepTime(){ return timeArray.length ? timeArray[stepIdx] : t_ns; }
+  function updateTimeLabel() {
+    const s = (t_ns/1e3).toFixed(1);
+    const stepInfo = timeArray.length ? `  (step ${stepIdx+1}/${timeArray.length})` : '';
+    lbl.textContent = `t=${s} µs${stepInfo}`;
+  }
+  function seekToStep(i){
+    if (!timeArray.length) return;
+    stepIdx = Math.max(0, Math.min(timeArray.length-1, i));
+    t_ns = timeArray[stepIdx];
+    scrub.value = t_ns;
+    playing = false; btn.textContent = 'Play';
+    updateTimeLabel();
+    render();
+  }
+  function syncStepIdx(){
+    if (!timeArray.length) return;
+    while (stepIdx+1 < timeArray.length && timeArray[stepIdx+1] <= t_ns) stepIdx++;
+    while (stepIdx > 0 && timeArray[stepIdx] > t_ns) stepIdx--;
+  }
+  btn.onclick  = ()=>{ playing = !playing; btn.textContent = playing?"Pause":"Play"; last=performance.now(); if (playing) tick(); };
+  prev.onclick = ()=> seekToStep(stepIdx-1);
+  next.onclick = ()=> seekToStep(stepIdx+1);
+  scrub.oninput = ()=>{ t_ns = +scrub.value; syncStepIdx(); updateTimeLabel(); render(); };
+  window.addEventListener('keydown', (e)=>{ if (e.key === 'ArrowLeft') seekToStep(stepIdx-1); if (e.key === 'ArrowRight') seekToStep(stepIdx+1); });
+
+  function tick(){
+    if (!playing) return;
+    const now = performance.now();
+    const dt = now - last; last = now;
+    const speed = parseFloat(speedCtl.value);
+    t_ns = Math.min(t_ns + dt*speed*1000/60, +scrub.max); // *1000/60 to adjust for 60 Hz refresh rate
+    scrub.value = t_ns; 
+    syncStepIdx();
+    updateTimeLabel();
+    render();
+    if (t_ns < +scrub.max) requestAnimationFrame(tick);
+    else { playing=false; btn.textContent="Play"; }
+  }
+
+      /**
+       * Main render function - orchestrates all visualization updates
+       * Called on every frame during playback and on manual navigation
+       */
+      function render() {
+        // Ensure proper layer ordering for visual elements
+        boxesG.lower(); 
+        chanG.raise(); 
+        linkG.raise(); 
+        pktG.raise(); 
+        nodeTextG.raise();
+
+        reduceTo(t_ns);
+
+        const inflightBits = new Set(
+          events
+            .filter(e => e.type === 'sendBit' && t_ns >= e.t0_ns && t_ns <= e.t1_ns)
+            .map(e => e.bit)
+        );
+
+        // Identify qubits that have been removed from the simulation
+        const removedBits = new Set(
+          events.filter(e => e.type === 'removeBit' && e.t_ns <= t_ns)
+                .map(e => e.bit)
+        );
+
+        // Render network structure and quantum storage
+        const { bounds, groups, rowAnchors } = layoutAndDrawNodes(boxesG, linkG, t_ns, inflightBits, removedBits);
+
+        // Render communication infrastructure
+        drawChannels(chanG, bounds);
+
+        // Render quantum entanglement connections
+        drawQubitEntanglementLinks(linkG, bounds, rowAnchors, removedBits);
+
+        // Render moving elements
+        drawInflightBits(linkG, bounds, t_ns, removedBits);
+        drawPackets(pktG, bounds, t_ns);
+
+        // Update user interface elements
+        drawTracePanel(t_ns);
+        drawNodeText(nodeTextG, bounds, currentStepTime());
+      }
+
+      // Initialize timeline and controls
+      updateTimeLabel();
+      render();
+      
+    })(); // End of main application function
+
+  </script>
+</body>
+</html>

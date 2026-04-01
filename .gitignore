@@ -1,0 +1,52 @@
+
+# Build artefacts (top-level)
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake-cache/
+**/CMakeFiles/
+**/CMakeCache.txt
+Testing/
+Makefile
+cmake_install.cmake
+compile_commands.json
+
+# Python
+__pycache__/
+*.pyc
+
+# clangd & misc caches
+.cache/
+.cache/clangd/
+.clangd/
+
+# Compiled bits
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+
+*.swp
+*.swo
+.DS_Store
+*.code-workspace
+
+# Logs 
+*.log
+
+# OSX specific
+*.DS_Store
+
+# Vendored deps: track source, ignore local builds
+third_party/**/build/
+third_party/**/CMakeFiles/
+third_party/**/CMakeCache.txt
+third_party/**/Testing/
+third_party/**/Makefile
+third_party/**/cmake_install.cmake
+
+# Doxygen
+/.doxygen-build/

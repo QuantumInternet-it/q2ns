@@ -1,0 +1,64 @@
+{"type":"createNode","t_ns":0,"label":"Orchestrator","x":50,"y":50}
+{"type":"createNode","t_ns":0,"label":"Client1","x":25,"y":20}
+{"type":"createNode","t_ns":0,"label":"Client2","x":75,"y":20}
+{"type":"createNode","t_ns":0,"label":"Client3","x":50,"y":85}
+{"type":"createChannel","t_ns":0,"from":"Orchestrator","to":"Client1","kind":"quantum"}
+{"type":"createChannel","t_ns":0,"from":"Orchestrator","to":"Client2","kind":"quantum"}
+{"type":"createChannel","t_ns":0,"from":"Orchestrator","to":"Client3","kind":"quantum"}
+{"type":"createChannel","t_ns":0,"from":"Orchestrator","to":"Client1","kind":"classical"}
+{"type":"createChannel","t_ns":0,"from":"Orchestrator","to":"Client2","kind":"classical"}
+{"type":"createChannel","t_ns":0,"from":"Orchestrator","to":"Client3","kind":"classical"}
+{"type":"traceText","t_ns":1000,"text":"Orchestrator creates 5 qubits"}
+{"type":"traceText","t_ns":1000,"node":"Orchestrator","text":"Preparing 5-qubit linear cluster state"}
+{"type":"createBit","t_ns":1000,"node":"Orchestrator","label":"q0","kind":"quantum","color":"#88CCEE"}
+{"type":"createBit","t_ns":1000,"node":"Orchestrator","label":"q1","kind":"quantum","color":"#88CCEE"}
+{"type":"createBit","t_ns":1000,"node":"Orchestrator","label":"q2","kind":"quantum","color":"#88CCEE"}
+{"type":"createBit","t_ns":1000,"node":"Orchestrator","label":"q3","kind":"quantum","color":"#88CCEE"}
+{"type":"createBit","t_ns":1000,"node":"Orchestrator","label":"q4","kind":"quantum","color":"#88CCEE"}
+{"type":"traceText","t_ns":1100,"text":"Orchestrator applies H to all qubits"}
+{"type":"traceText","t_ns":1100,"node":"Orchestrator","text":"H layer (all qubits, parallel)"}
+{"type":"setBitColor","t_ns":1100,"bit":"q0","color":"#bc71eb"}
+{"type":"setBitColor","t_ns":1100,"bit":"q1","color":"#bc71eb"}
+{"type":"setBitColor","t_ns":1100,"bit":"q2","color":"#bc71eb"}
+{"type":"setBitColor","t_ns":1100,"bit":"q3","color":"#bc71eb"}
+{"type":"setBitColor","t_ns":1100,"bit":"q4","color":"#bc71eb"}
+{"type":"traceText","t_ns":1400,"text":"CZ layer 1: CZ(q0,q1) CZ(q2,q3)"}
+{"type":"traceText","t_ns":1400,"node":"Orchestrator","text":"CZ layer 1"}
+{"type":"entangle","t_ns":1400,"bits":["q0","q1"]}
+{"type":"entangle","t_ns":1400,"bits":["q2","q3"]}
+{"type":"traceText","t_ns":1700,"text":"CZ layer 2: CZ(q1,q2) CZ(q3,q4) - cluster state ready"}
+{"type":"traceText","t_ns":1700,"node":"Orchestrator","text":"CZ layer 2 - cluster state ready"}
+{"type":"entangle","t_ns":1700,"bits":["q1","q2"]}
+{"type":"entangle","t_ns":1700,"bits":["q3","q4"]}
+{"type":"traceText","t_ns":1800,"text":"Orchestrator sends q0, q2, q4 to clients"}
+{"type":"traceText","t_ns":1800,"node":"Orchestrator","text":"Sending q0/q2/q4 to clients"}
+{"type":"sendBit","t0_ns":1800,"t1_ns":1810,"bit":"q0","from":"Orchestrator","to":"Client1","kind":"quantum"}
+{"type":"sendBit","t0_ns":1800,"t1_ns":1810,"bit":"q2","from":"Orchestrator","to":"Client2","kind":"quantum"}
+{"type":"sendBit","t0_ns":1800,"t1_ns":1810,"bit":"q4","from":"Orchestrator","to":"Client3","kind":"quantum"}
+{"type":"setBitColor","t_ns":1810,"bit":"q0","color":"#AACCFF"}
+{"type":"traceText","t_ns":1810,"node":"Client1","text":"q0 arrived - awaiting correction basis"}
+{"type":"setBitColor","t_ns":1810,"bit":"q2","color":"#AACCFF"}
+{"type":"traceText","t_ns":1810,"node":"Client2","text":"q2 arrived - awaiting correction basis"}
+{"type":"setBitColor","t_ns":1810,"bit":"q4","color":"#AACCFF"}
+{"type":"traceText","t_ns":1810,"node":"Client3","text":"q4 arrived - awaiting correction basis"}
+{"type":"traceText","t_ns":1910,"text":"Orchestrator measures q1, q3 in X-basis"}
+{"type":"traceText","t_ns":1910,"node":"Orchestrator","text":"Measuring q1, q3 (X-basis)"}
+{"type":"traceText","t_ns":1910,"text":"q1 X-measure outcome = 1"}
+{"type":"graphMeasure","t_ns":1910,"bit":"q1","base":"X"}
+{"type":"removeBit","t_ns":1910,"bit":"q1"}
+{"type":"traceText","t_ns":1910,"text":"q3 X-measure outcome = 0"}
+{"type":"graphMeasure","t_ns":1910,"bit":"q3","base":"X"}
+{"type":"removeBit","t_ns":1910,"bit":"q3"}
+{"type":"traceText","t_ns":1910,"node":"Orchestrator","text":"Measurements complete - sending outcomes to clients"}
+{"type":"sendPacket","t0_ns":1910,"t1_ns":1920,"from":"Orchestrator","to":"Client1","label":"q1 outcome: m=1"}
+{"type":"sendPacket","t0_ns":1910,"t1_ns":1920,"from":"Orchestrator","to":"Client2","label":"q1 outcome: m=1"}
+{"type":"sendPacket","t0_ns":1910,"t1_ns":1920,"from":"Orchestrator","to":"Client2","label":"q3 outcome: m=0"}
+{"type":"sendPacket","t0_ns":1910,"t1_ns":1920,"from":"Orchestrator","to":"Client3","label":"q3 outcome: m=0"}
+{"type":"traceText","t_ns":4400,"node":"Client1","text":"q1 outcome m=1 received - q0 ready"}
+{"type":"setBitColor","t_ns":4400,"bit":"q0","color":"#44AA99"}
+{"type":"traceText","t_ns":4400,"node":"Client2","text":"outcome m=1 received (1/2)"}
+{"type":"traceText","t_ns":4400,"node":"Client3","text":"q3 outcome m=0 received - q4 ready"}
+{"type":"setBitColor","t_ns":4400,"bit":"q4","color":"#44AA99"}
+{"type":"traceText","t_ns":6880,"node":"Client2","text":"outcome m=0 received (2/2)"}
+{"type":"traceText","t_ns":6880,"node":"Client2","text":"Both outcomes received - q2 ready"}
+{"type":"setBitColor","t_ns":6880,"bit":"q2","color":"#44AA99"}
