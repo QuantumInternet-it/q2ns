@@ -1,0 +1,59 @@
+{
+  "title": "Q2NS: Quantum Network Simulator",
+  "upload_type": "software",
+  "license": "GPL-2.0-only",
+  "description": "Q2NS is an open-source extension of ns-3 for quantum network simulation, enabling physically grounded and extensible modeling of quantum-classical network behavior.",
+  "creators": [
+    {
+      "name": "Pearson, Adam",
+      "affiliation": "University of Naples Federico II",
+      "orcid": "https://orcid.org/0009-0007-9817-0487"
+    },
+    {
+      "name": "Mazza, Francesco",
+      "affiliation": "University of Naples Federico II",
+      "orcid": "https://orcid.org/0009-0000-1662-5695"
+    },
+    {
+      "name": "Caleffi, Marcello",
+      "affiliation": "University of Naples Federico II",
+      "orcid": "https://orcid.org/0000-0001-5726-5489"
+    },
+    {
+      "name": "Cacciapuoti, Angela Sara",
+      "affiliation": "University of Naples Federico II",
+      "orcid": "https://orcid.org/0000-0002-0477-2927"
+    }
+  ],
+  "keywords": [
+    "quantum networking",
+    "quantum network simulation",
+    "ns-3",
+    "quantum internet",
+    "network simulator"
+  ],
+  "related_identifiers": [
+    {
+      "scheme": "url",
+      "identifier": "https://github.com/QuantumInternet-it/q2ns",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    },
+    {
+      "scheme": "arxiv",
+      "identifier": "arXiv:2603.02857",
+      "relation": "isDocumentedBy",
+      "resource_type": "publication-preprint"
+    }
+  ],
+  "grants": [
+    {
+      "id": "101169850"
+    }
+  ],
+  "communities": [
+    {
+      "identifier": "qnattynet"
+    }
+  ]
+}
