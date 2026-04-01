@@ -7,36 +7,36 @@ By the end of this tutorial you will know how to:
 - Model noisy quantum channels using QMaps
 - Compute the fidelity of a received state against an ideal reference
 
-This tutorial only uses quantum channels -- no classical TCP/UDP yet. For hybrid quantum-classical protocols see Tutorial 3.
+This tutorial only uses quantum channels -- no classical TCP/UDP yet. For hybrid quantum-classical protocols see [Tutorial 3](tutorial-03.md).
 
 ## 1. Custom Quantum Circuit
 
 Quantum computation and quantum communication protocols often require measurements in bases other than the computational (Z) basis. Here we build a small circuit that:
 
-1. Prepares the state $|1\rangle$ using an X gate
+1. Prepares the state |1⟩ using an X gate
 2. Applies additional gates (H, S) to reach specific target states
 3. Measures each result in the Pauli basis where the outcome is deterministic
 
 **Measurement bases in Q2NS:**
 
-| Basis      | $r=0$ eigenstate                                              | $r=1$ eigenstate                                              | What it distinguishes                |
-| ---------- | ------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------ |
-| `Basis::Z` | $\|0\rangle$                                                  | $\|1\rangle$                                                  | Computational amplitude -- bit value |
-| `Basis::X` | $\|{+}\rangle = \tfrac{1}{\sqrt{2}}(\|0\rangle+\|1\rangle)$   | $\|{-}\rangle = \tfrac{1}{\sqrt{2}}(\|0\rangle-\|1\rangle)$   | Relative sign of the superposition   |
-| `Basis::Y` | $\|{+i}\rangle = \tfrac{1}{\sqrt{2}}(\|0\rangle+i\|1\rangle)$ | $\|{-i}\rangle = \tfrac{1}{\sqrt{2}}(\|0\rangle-i\|1\rangle)$ | Imaginary relative phase             |
+| Basis      | $$r=0 \textbf{ eigenstate}$$                                   | $$r=1 \textbf{ eigenstate}$$                                   | What it distinguishes                |
+| ---------- | -------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------ |
+| `Basis::Z` | $$\|0\rangle$$                                                 | $$\|1\rangle$$                                                 | Computational amplitude -- bit value |
+| `Basis::X` | $$\|{+}\rangle = \frac{1}{\sqrt{2}}(\|0\rangle+\|1\rangle)$$   | $$\|{-}\rangle = \frac{1}{\sqrt{2}}(\|0\rangle-\|1\rangle)$$   | Relative sign of the superposition   |
+| `Basis::Y` | $$\|{+i}\rangle = \frac{1}{\sqrt{2}}(\|0\rangle+i\|1\rangle)$$ | $$\|{-i}\rangle = \frac{1}{\sqrt{2}}(\|0\rangle-i\|1\rangle)$$ | Imaginary relative phase             |
 
-`Measure` returns 0 for the $r=0$ eigenstate and 1 for the $r=1$ eigenstate.
-The measurement probability follows the Born rule. For a pure state $|\psi\rangle$ and basis eigenstates $\{|e_0\rangle, |e_1\rangle\}$:
+`Measure` returns 0 for the r = 0 eigenstate and 1 for the r = 1 eigenstate.
+The measurement probability follows the Born rule. For a pure state |ψ⟩ and basis eigenstates {|e₀⟩, |e₁⟩}:
 
 $$P(r) = |\langle e_r | \psi \rangle|^2$$
 
-For the general case of a mixed state $\rho$ (used by the `DM` backend), this generalises to:
+For the general case of a mixed state ρ (used by the `DM` backend), this generalises to:
 
 $$P(r) = \mathrm{Tr}(\Pi_r\,\rho), \qquad \Pi_r = |e_r\rangle\langle e_r|$$
 
-which reduces to the pure-state formula when $\rho = |\psi\rangle\langle\psi|$.
+This reduces to the pure-state formula when
 
-Set the basis by passing it as the second argument to `Measure`:
+$$\rho = |\psi\rangle\langle\psi|$$
 
 ```cpp
 int r = node->Measure(q, Basis::Z);    // Z-basis
@@ -44,13 +44,13 @@ int r = node->Measure(q, Basis::X);    // X-basis
 int r = node->Measure(q, Basis::Y);    // Y-basis
 ```
 
-A qubit in an eigenstate of the measurement basis always yields the matching deterministic outcome. For example $|+\rangle$ measured in the X-basis always returns 0. That is the idea behind the three tests below:
+A qubit in an eigenstate of the measurement basis always yields the matching deterministic outcome. For example, |+⟩ measured in the X-basis always returns 0. That is the idea behind the three tests below:
 
-| Test | Initial state | Gate(s)  | Basis | Expected | Why                                                    |
-| ---- | ------------- | -------- | ----- | -------- | ------------------------------------------------------ |
-| 1    | $\|0\rangle$  | H        | X     | 0        | $\|0\rangle\to\|{+}\rangle$, the $+$ eigenstate of X   |
-| 2    | $\|1\rangle$  | H        | X     | 1        | $\|1\rangle\to\|{-}\rangle$, the $-$ eigenstate of X   |
-| 3    | $\|0\rangle$  | H then S | Y     | 0        | $\|0\rangle\to\|{+i}\rangle$, the $+i$ eigenstate of Y |
+| Test | Initial state  | Gate(s)  | Basis | Expected | Why                                                                     |
+| ---- | -------------- | -------- | ----- | -------- | ----------------------------------------------------------------------- |
+| 1    | $$\|0\rangle$$ | H        | X     | 0        | $$\|0\rangle\to\|{+}\rangle \text{ the } + \text{eigenstate of X}$$     |
+| 2    | $$\|1\rangle$$ | H        | X     | 1        | $$\|1\rangle\to\|{-}\rangle \text{, the } - \text{ eigenstate of X}$$   |
+| 3    | $$\|0\rangle$$ | H then S | Y     | 0        | $$\|0\rangle\to\|{+i}\rangle \text{, the } +i \text{ eigenstate of Y}$$ |
 
 Note that `Measure` collapses the qubit, so a separate qubit is needed for each test. In order to correctly simulate randomness, every measurement needs to be scheduled, and the seeds set before the run.
 
@@ -76,7 +76,14 @@ Each test uses its own qubit because `Measure` collapses the state. Allocating
 all qubits before `Run()` and scheduling the gates + measurements as separate
 events mirrors the event-driven structure used throughout Q2NS.
 
-The S gate (phase gate) multiplies the $|1\rangle$ amplitude by $i$, turning $|+\rangle = (|0\rangle + |1\rangle)/\sqrt{2}$ into $|{+i}\rangle = (|0\rangle + i|1\rangle)/\sqrt{2}$. The Ket and Stab backends both support all three of these Clifford gates.
+The S gate (phase gate) multiplies the |1⟩ amplitude by i, turning |+⟩ into |+i⟩. Explicitly,
+
+$$
+|+\rangle = \frac{|0\rangle + |1\rangle}{\sqrt{2}}, \qquad
+|+i\rangle = \frac{|0\rangle + i|1\rangle}{\sqrt{2}}.
+$$
+
+The Ket and Stab backends both support all three of these Clifford gates.
 
 **Custom gates** in Q2NS are arbitrary unitaries passed as a matrix. To compose H and S into a single gate object, multiply their matrices -- in standard matrix notation the rightmost matrix is applied first, so `MatrixS() * MatrixH()` means "apply H then S":
 
@@ -90,9 +97,9 @@ Simulator::Schedule(MicroSeconds(40), [node, q, HS]() {
 });
 ```
 
-Alternatively, the same gate can be defined entry-by-entry with `MakeMatrix` and `Complex{real, imag}`. Multiplying out $S \cdot H$ gives:
+Alternatively, the same gate can be defined entry-by-entry with `MakeMatrix` and `Complex{real, imag}`. The matrix product is
 
-$$S \cdot H = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 \\ i & -i \end{pmatrix}$$
+$$S \cdot H = \frac{1}{\sqrt{2}} \begin{pmatrix} 1 & 1 \\\\ i & -i \end{pmatrix}$$
 
 ```cpp
 const double s = 1.0 / std::sqrt(2.0);
@@ -104,7 +111,7 @@ auto HS_explicit = gates::Custom(MakeMatrix({
 
 Both representations produce exactly the same gate. The `MakeMatrix` form is useful when a custom unitary comes from an analytical derivation or an external specification and cannot be expressed as a product of built-in gates.
 
-Any $2^k \times 2^k$ unitary matrix can be wrapped this way. Using a custom gate is convenient when the composed matrix is computed once and reused across many qubits.
+Any 2^k × 2^k unitary matrix can be wrapped this way. Using a custom gate is convenient when the composed matrix is computed once and reused across many qubits.
 
 **Expected output:**
 
@@ -240,9 +247,9 @@ loss->SetAttribute("Probability", DoubleValue(0.5));  // 50% erasure
 
 **Depolarizing noise:** `DepolarizingQMap` implements the single-qubit depolarizing channel, a CPTP map defined by:
 
-$$\mathcal{E}(\rho) = (1-p)\,\rho + \frac{p}{3}\bigl(X\rho X + Y\rho Y + Z\rho Z\bigr)$$
+$$\varepsilon(\rho) = (1-p)\,\rho + \frac{p}{3}\bigl(X\rho X + Y\rho Y + Z\rho Z\bigr)$$
 
-where $p \in [0, 1]$ is the error probability. It accepts either a per-transmission probability or a physical rate that Q2NS converts using the channel flight time:
+where p ∈ [0, 1] is the error probability. It accepts either a per-transmission probability or a physical rate that Q2NS converts using the channel flight time:
 
 ```cpp
 // Fixed probability per qubit
@@ -256,37 +263,37 @@ depol2->SetAttribute("Rate", DoubleValue(1e8));
 
 Use `Probability` for a per-transmission error budget; use `Rate` when your
 noise model comes from a measured physical quantity (e.g. a fibre loss
-coefficient in dB/km with a known propagation delay). When errors follow a **homogeneous Poisson process** with rate $\lambda$ (errors/s), the probability of at least one error during flight time $\Delta t$ is given by the Poisson survival formula, which Q2NS uses internally:
+coefficient in dB/km with a known propagation delay). When errors follow a **homogeneous Poisson process** with rate λ (errors/s), the probability of at least one error during flight time Δt is given by the Poisson survival formula, which Q2NS uses internally:
 
 $$p = 1 - e^{-\lambda \, \Delta t}$$
 
-where $\Delta t$ is the link propagation delay passed to `InstallQuantumLink`.
+where Δt is the link propagation delay passed to `InstallQuantumLink`.
 As a worked example, the default `depolRate=1e8` with the 10 ns channel delay used
 in the demo gives
 
 $$p = 1 - e^{-10^8 \times 10^{-8}} = 1 - e^{-1} \approx 0.632$$
 
 so roughly 63 % of transmitted qubits will receive a random Pauli error.
-To stay in the low-noise regime you would choose a rate such that $\lambda\Delta t \ll 1$
-(e.g. `Rate=1e6` on a 10 ns link gives $p \approx 1\%$).
+To stay in the low-noise regime you would choose a rate such that λΔt ≪ 1
+(for example, `Rate=1e6` on a 10 ns link gives p ≈ 1%).
 
 **Built-in QMap types:**
 
-| Type                | Effect                                               |
-| ------------------- | ---------------------------------------------------- |
+| Type                | Effect                                                |
+| ------------------- | ----------------------------------------------------- |
 | `LossQMap`          | Marks qubit lost -- receive callback is not triggered |
-| `DepolarizingQMap`  | Random Pauli (X, Y, or Z) with equal probability     |
-| `DephasingQMap`     | Z gate (phase flip) with given probability           |
-| `RandomGateQMap`    | Draws from a user-supplied weighted gate set         |
-| `RandomUnitaryQMap` | Applies a Haar-random unitary                        |
+| `DepolarizingQMap`  | Random Pauli (X, Y, or Z) with equal probability      |
+| `DephasingQMap`     | Z gate (phase flip) with given probability            |
+| `RandomGateQMap`    | Draws from a user-supplied weighted gate set          |
+| `RandomUnitaryQMap` | Applies a Haar-random unitary                         |
 
 **Composing noise models:**
 
-Multiple QMaps are combined with `QMap::Compose`, which chains them as a sequential CPTP composition -- the first argument is applied first:
+Multiple QMaps are combined with `QMap::Compose`, which chains them sequentially. The first argument is applied first:
 
-$$\texttt{Compose}(\{\mathcal{E}_1, \mathcal{E}_2, \ldots, \mathcal{E}_n\}) \;:\; \rho \;\mapsto\; (\mathcal{E}_n \circ \cdots \circ \mathcal{E}_2 \circ \mathcal{E}_1)(\rho)$$
+$$\texttt{Compose}(\varepsilon_1, \varepsilon_2, \ldots, \varepsilon_n) \;:\; \rho \;\mapsto\; (\varepsilon_n \circ \cdots \circ \varepsilon_2 \circ \varepsilon_1)(\rho)$$
 
-For instance, the following composes a loss channel followed by depolarizing noise -- a qubit that survives loss ($\mathcal{E}_{\text{loss}}$) then undergoes random Pauli errors ($\mathcal{E}_{\text{depol}}$):
+For instance, the following composes a loss channel followed by depolarizing noise: a qubit that survives loss then undergoes random Pauli errors.
 
 ```cpp
 auto map = QMap::Compose({loss, depol});
@@ -498,11 +505,17 @@ int main(int argc, char* argv[]) {
 After sending a qubit through a noisy channel you often want to quantify how close the received state is to the ideal one. Q2NS provides
 `q2ns::analysis::Fidelity` for this purpose.
 
-Fidelity is a number in $[0, 1]$: a value of 1 means the two states are identical, 0 means they are orthogonal. For two pure states the formula is
+Fidelity is a number in [0, 1]: a value of 1 means the two states are identical, 0 means they are orthogonal. For two pure states the formula is
 
 $$F(|\psi\rangle, |\phi\rangle) = |\langle\psi|\phi\rangle|^2$$
 
-For mixed states Q2NS uses the full Uhlmann fidelity $F(\rho,\sigma) = \bigl(\mathrm{Tr}\sqrt{\sqrt{\rho}\,\sigma\sqrt{\rho}}\bigr)^2$ internally, so you do not need to distinguish cases. Include the analysis header:
+For mixed states Q2NS uses the full Uhlmann fidelity internally:
+
+$$F(\rho,\sigma) = \bigl(\mathrm{Tr}\sqrt{\sqrt{\rho}\,\sigma\sqrt{\rho}}\bigr)^2.$$
+
+So you do not need to distinguish cases yourself.
+
+Include the analysis header:
 
 ```cpp
 #include "ns3/q2ns-analysis.h"
@@ -564,7 +577,15 @@ for (double p : {0.0, 0.10, 0.25, 0.50, 0.75, 1.0}) {
 Simulator::Destroy();
 ```
 
-Since `ideal` is always a pure state $|\psi\rangle\langle\psi|$, `q2ns::analysis::Fidelity` uses the simplified form $F = \langle\psi|\sigma|\psi\rangle$, where $\sigma$ is the (potentially mixed) received state. For the depolarizing channel this evaluates to $F = 1 - \tfrac{2p}{3}$, falling from 1 at $p=0$ to $\tfrac{1}{2}$ at $p = \tfrac{3}{4}$, where the channel reduces every input to the maximally mixed state $\tfrac{I}{2}$.
+Since `ideal` is always a pure state, `q2ns::analysis::Fidelity` uses the simplified form
+
+$$F = \langle\psi|\sigma|\psi\rangle,$$
+
+where σ is the (potentially mixed) received state. For the depolarizing channel this becomes
+
+$$F = 1 - \frac{2p}{3}.$$
+
+It falls from 1 at p = 0 to 1/2 at p = 3/4, where the channel reduces every input to the maximally mixed state I/2.
 
 > `Fidelity` requires both arguments to use the same backend (both Ket, both DM, or both Stab). Passing mixed backends throws `std::runtime_error`.
 

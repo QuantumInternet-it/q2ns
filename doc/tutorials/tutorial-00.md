@@ -210,7 +210,7 @@ Every event in the JSON trace corresponds to something you can see in the visual
 
 ## 10. Producing Your Own Traces
 
-Once you start writing your own Q2NS simulations (see Tutorial 1), you can emit a trace by including the `q2nsviz-trace.h` header and calling the provided tracing functions:
+Once you start writing your own Q2NS simulations (see [Tutorial 1]((tutorial-01.md))), you can emit a trace by including the `q2nsviz-trace.h` header and calling the provided tracing functions:
 
 ```cpp
 #include "ns3/q2nsviz-trace-writer.h"

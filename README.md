@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt"><img src="https://img.shields.io/badge/license-GPL--2.0--only-blue.svg?style=flat-square"> </a>
+  <a href="https://github.com/QuantumInternet-it/q2ns/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-GPL--2.0--only-blue.svg?style=flat-square"> </a>
   <!--  <a href="https://arxiv.org/abs/2603.02857"><img src="https://img.shields.io/badge/arXiv-2603.02857-b31b1b.svg?style=flat-square"></a>  -->
   <a href="https://doi.org/10.5281/zenodo.19370945"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.19370945.svg" alt="DOI"></a>
   <a href="https://www.nsnam.org/"><img src="https://img.shields.io/badge/ns--3-3.47-brightgreen?style=flat-square"></a>

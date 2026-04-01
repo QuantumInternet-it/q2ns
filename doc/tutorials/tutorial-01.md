@@ -9,7 +9,7 @@ practical usage rather than deep theory. By the end you will know how to:
 - Add noise models on channels
 - Drive a simulation with the ns-3 event scheduler
 
-If you want to watch simulations run before writing code, see Tutorial 0 (the Q2NSViz visualizer).
+If you want to watch simulations run before writing code, see [Tutorial 0](tutorial-00.md) (the Q2NSViz visualizer).
 
 ## 1. Mental Model of Q2NS
 
