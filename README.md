@@ -167,16 +167,15 @@ Thank you to all the researchers who have helped develop Q2NS!
 
 
 <p align="center">
-  <!-- Add new contributors below -->
+  <!-- Add new contributors below following the same pattern -->
   <a href="https://github.com/pearsona">
-    <img src="https://github.com/pearsona.png" width="60" height="60" alt="Adam Pearson" title="Adam Pearson" style="border-radius:50%;" />
+    <img src="https://wsrv.nl/?url=github.com/pearsona.png&w=60&h=60&mask=circle" width="60" height="60" alt="Adam Pearson" title="Adam Pearson" />
   </a>
   <a href="https://github.com/framazzaa">
-    <img src="https://github.com/framazzaa.png" width="60" height="60" alt="Francesco Mazza" title="Francesco Mazza" style="border-radius:50%;" />
+    <img src="https://wsrv.nl/?url=github.com/framazzaa.png&w=60&h=60&mask=circle" width="60" height="60" alt="Francesco Mazza" title="Francesco Mazza" />
   </a>
   <a href="https://github.com/AngelaSara">
-    <img src="https://github.com/AngelaSara.png" width="60" height="60" alt="Angela Sara Cacciapuoti" title="Angela Sara Cacciapuoti" 
-    style="border-radius:50%;" />
+    <img src="https://wsrv.nl/?url=github.com/AngelaSara.png&w=60&h=60&mask=circle" width="60" height="60" alt="Angela Sara Cacciapuoti" title="Angela Sara Cacciapuoti" />
   </a>
 </p>
 
