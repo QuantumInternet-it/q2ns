@@ -165,9 +165,18 @@ Q2NS is developed by our [Quantum Internet Research Group](https://qnattynet.qua
 
 Thank you to all the researchers who have helped develop Q2NS!
 
+
 <p align="center">
-  <a href="https://github.com/QuantumInternet-it/q2ns/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=QuantumInternet-it/q2ns" alt="Contributors" />
+  <!-- Add new contributors below -->
+  <a href="https://github.com/pearsona">
+    <img src="https://github.com/pearsona.png" width="60" height="60" alt="Adam Pearson" title="Adam Pearson" style="border-radius:50%;" />
+  </a>
+  <a href="https://github.com/framazzaa">
+    <img src="https://github.com/framazzaa.png" width="60" height="60" alt="Francesco Mazza" title="Francesco Mazza" style="border-radius:50%;" />
+  </a>
+  <a href="https://github.com/AngelaSara">
+    <img src="https://github.com/AngelaSara.png" width="60" height="60" alt="Angela Sara Cacciapuoti" title="Angela Sara Cacciapuoti" 
+    style="border-radius:50%;" />
   </a>
 </p>
 
@@ -184,19 +193,17 @@ To support this endeavor, please consider:
 ## Cite This
 
 If you use Q2NS in your research, please cite our reference paper:
-[_An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation_](https://arxiv.org/abs/2603.02857) — [PDF](https://arxiv.org/pdf/2603.02857)
+[_An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation_](https://doi.org/10.1016/j.comnet.2026.112292)
 
 You can use the GitHub **“Cite this repository”** button (top-right of this page) for a ready-to-use citation in multiple formats, or use the BibTeX entry below:
 
 ```bibtex
-@misc{q2ns-journal-2026,
-  title         = {An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation},
-  author        = {Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti},
-  year          = {2026},
-  eprint        = {2603.02857},
-  archivePrefix = {arXiv},
-  primaryClass  = {quant-ph},
-  url           = {https://arxiv.org/abs/2603.02857}
+@article{q2ns-journal-2026,
+  title     = {{An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation}},
+  author    = {Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti},
+  journal   = {Computer Networks},
+  year      = {2026},
+  publisher ={Elsevier}
 }
 ```
 
@@ -206,11 +213,11 @@ The following papers use, build, or motivate Q2NS. If your work belongs here, pl
 
 [[1]](https://ieeexplore.ieee.org/document/11322738) _Quantum Internet Architecture: Unlocking Quantum-Native Routing via Quantum Addressing (invited paper)_. Marcello Caleffi and Angela Sara Cacciapuoti -- in IEEE Transactions on Communications, vol. 74, pp. 3577-3599, 2026.
 
-[[2]](https://arxiv.org/abs/2603.02857) _An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation_. Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- 2026.
+[[2]](https://doi.org/10.1016/j.comnet.2026.112292) _An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation_. Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- Computer Networks (Elsevier) 2026.
 
 [[3]](https://doi.org/10.5281/zenodo.18980972) _Q2NS: A Modular Framework for Quantum Network Simulation in ns-3 (invited paper)_. Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- Proc. of QCNC 2026.
 
-[4] _Q2NS Demo: a Quantum Network Simulator based on ns-3_. Francesco Mazza, Adam Pearson, Marcello Caleffi, Angela Sara Cacciapuoti -- 2026.
+[[4]](https://doi.org/10.48550/arXiv.2604.02112) _Q2NS Demo: a Quantum Network Simulator based on ns-3_. Francesco Mazza, Adam Pearson, Marcello Caleffi, Angela Sara Cacciapuoti -- 2026.
 
 <!-- Add further entries in the format above as new papers appear. -->
 
