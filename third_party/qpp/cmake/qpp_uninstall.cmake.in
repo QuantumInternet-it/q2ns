@@ -1,0 +1,33 @@
+if(NOT EXISTS "@CMAKE_BINARY_DIR@/install_manifest.txt")
+  message(
+    FATAL_ERROR
+      "Cannot find install manifest: @CMAKE_BINARY_DIR@/install_manifest.txt")
+endif()
+
+file(READ "@CMAKE_BINARY_DIR@/install_manifest.txt" files)
+string(REGEX REPLACE "\n" ";" files "${files}")
+foreach(file ${files})
+  message(STATUS "Uninstalling ${file}")
+  if(IS_SYMLINK "${file}" OR EXISTS "${file}")
+    execute_process(
+      COMMAND @CMAKE_COMMAND@ -E remove "${file}"
+      OUTPUT_VARIABLE rm_out
+      RESULT_VARIABLE rm_retval)
+    if(${rm_retval})
+      message(FATAL_ERROR "Problem when removing ${file}")
+    endif()
+  else()
+    message(STATUS "File ${file} does not exist.")
+  endif()
+endforeach()
+
+message(STATUS "Removing
+    @CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/cmake/@PROJECT_NAME@")
+execute_process(
+  COMMAND ${CMAKE_COMMAND} -E remove_directory
+          "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/cmake/@PROJECT_NAME@")
+
+message(STATUS "Removing @QPP_INSTALL_DIR@ ")
+execute_process(
+  COMMAND ${CMAKE_COMMAND} -E remove_directory
+          "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@/@PROJECT_NAME@")

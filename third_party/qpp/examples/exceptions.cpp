@@ -1,0 +1,22 @@
+// Source: ./examples/exceptions.cpp
+//
+// Exceptions
+
+#include <exception>
+#include <iostream>
+
+#include "qpp/qpp.hpp"
+
+int main() {
+    using namespace qpp;
+
+    cmat rho = randrho(16); // 4 qubits (subsystems)
+    try {
+        // the line below throws qpp::exception::SubsysMismatchDims
+        realT mInfo = qmutualinfo(rho, {0}, {4});
+        std::cout << ">> Mutual information between first and last subsystem: ";
+        std::cout << mInfo << '\n';
+    } catch (const std::exception& e) {
+        std::cout << ">> Exception caught: " << e.what() << '\n';
+    }
+}

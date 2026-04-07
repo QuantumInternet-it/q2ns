@@ -71,11 +71,11 @@
  *
  * <a href="https://ieeexplore.ieee.org/document/11322738">[1]</a> <em>Quantum Internet Architecture: Unlocking Quantum-Native Routing via Quantum Addressing (invited paper)</em>. Marcello Caleffi and Angela Sara Cacciapuoti -- IEEE Transactions on Communications, vol. 74, pp. 3577–3599, 2026.
  *
- * <a href="https://arxiv.org/abs/2603.02857">[2]</a> <em>An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation</em>. Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- 2026.
+ * <a href="https://doi.org/10.1016/j.comnet.2026.112292">[2]</a> <em>An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation</em>. Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- Computer Networks (Elsevier) 2026.
  *
  * <a href="https://doi.org/10.5281/zenodo.18980972">[3]</a> <em>Q2NS: A Modular Framework for Quantum Network Simulation in ns-3 (invited paper)</em>. Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- Proc. QCNC 2026.
  *
- * [4] <em>Q2NS Demo: a Quantum Network Simulator based on ns-3</em>. Francesco Mazza, Adam Pearson, Marcello Caleffi, Angela Sara Cacciapuoti -- 2026.
+ * <a href="https://doi.org/10.48550/arXiv.2604.02112">[4]</a> <em>Q2NS Demo: a Quantum Network Simulator based on ns-3</em>. Francesco Mazza, Adam Pearson, Marcello Caleffi, Angela Sara Cacciapuoti -- 2026.
  *
  * @section q2ns_acknowledgement Acknowledgement
  *

@@ -29,6 +29,8 @@ preferred-citation:
       given-names: Marcello
     - family-names: Cacciapuoti
       given-names: Angela Sara
+  journal: "Computer Networks"
   year: 2026
-  journal: "arXiv"
-  url: "https://arxiv.org/abs/2603.02857"
+  publisher: "Elsevier"
+  doi: "10.1016/j.comnet.2026.112292"
+  url: "https://doi.org/10.1016/j.comnet.2026.112292"
