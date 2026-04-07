@@ -30,7 +30,7 @@ We begin with a single complete example.
 
 The network topology will be a 5-node star: one central node connected to four remote nodes by quantum links. The center will create all five qubits locally, prepare a 1D cluster state, send one qubit to each remote node, and then all nodes will measure their qubits.
 
-A 1D cluster state on $n$ qubits is prepared as
+A 1D cluster state on n qubits is prepared as
 
 $$
 |C_n\rangle = (CZ_{0,1}\, CZ_{1,2} \cdots CZ_{n-2,n-1})\, |+\rangle^{\otimes n}
@@ -833,7 +833,7 @@ Running any code, Q2NS or otherwise, will often be slower in the first few trial
 
 Modify the preparation step so that the center creates a GHZ state rather than a 1D cluster state.
 
-Recall that an $n$-qubit GHZ state has the form
+Recall that an n-qubit GHZ state has the form
 
 $$
 |GHZ_n\rangle = \frac{|0\cdots0\rangle + |1\cdots1\rangle}{\sqrt{2}}.
@@ -1368,11 +1368,11 @@ int main(int argc, char* argv[]) {
 
 ## Related Publications
 
-[[1]](https://ieeexplore.ieee.org/document/11322738) Marcello Caleffi and Angela Sara Cacciapuoti, _"Quantum Internet Architecture: Unlocking Quantum-Native Routing via Quantum Addressing"_ (invited paper), in IEEE Transactions on Communications, vol. 74, pp. 3577–3599, 2026.
+[[1]](https://ieeexplore.ieee.org/document/11322738) <em>Quantum Internet Architecture: Unlocking Quantum-Native Routing via Quantum Addressing</em> (invited paper). Marcello Caleffi and Angela Sara Cacciapuoti -- in IEEE Transactions on Communications, vol. 74, pp. 3577–3599, 2026.
 
 [[2]](https://doi.org/10.1016/j.comnet.2026.112292) Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti, _"An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation"_, Computer Networks (Elsevier), 2026.
 
-[[3]](https://doi.org/10.5281/zenodo.18980972) Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti, _"Q2NS: A Modular Framework for Quantum Network Simulation in ns-3"_ (invited paper), Proc. QCNC 2026.
+[[3]](https://doi.org/10.5281/zenodo.18980972) <em>Q2NS: A Modular Framework for Quantum Network Simulation in ns-3</em> (invited paper). Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- Proc. QCNC 2026.
 
 [[4]](https://doi.org/10.48550/arXiv.2604.02112) Francesco Mazza, Adam Pearson, Marcello Caleffi, Angela Sara Cacciapuoti, _"Q2NS Demo: a Quantum Network Simulator based on ns-3"_, 2026.
 

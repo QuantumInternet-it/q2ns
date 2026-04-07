@@ -168,7 +168,11 @@ Load `q2nsviz-graphstate-gen-example.json`.
 
 This is the most complex trace. One **Orchestrator** node coordinates three **Client** nodes.
 
-A **graph state** is a multipartite entangled state which can be described by a graph $G=(V,E)$: nodes of the graph correspond to qubits, and edges correspond to **controlled-Z (CZ)** entangling operations.
+A **graph state** is a multipartite entangled state which can be described by a graph:
+
+$$G=(V,E)$$
+
+where the nodes of the graph correspond to qubits, and edges correspond to **controlled-Z (CZ)** entangling operations.
 
 $$|G\rangle = \prod_{(i,j) \in E} CZ_{ij}\,|{+}\rangle^{\otimes|V|}$$
 
@@ -236,11 +240,11 @@ Then load the resulting JSON file in the viewer as described in Section 5.
 
 ## Related Publications
 
-[[1]](https://ieeexplore.ieee.org/document/11322738) Marcello Caleffi and Angela Sara Cacciapuoti, _"Quantum Internet Architecture: Unlocking Quantum-Native Routing via Quantum Addressing"_ (invited paper), in IEEE Transactions on Communications, vol. 74, pp. 3577–3599, 2026.
+[[1]](https://ieeexplore.ieee.org/document/11322738) <em>Quantum Internet Architecture: Unlocking Quantum-Native Routing via Quantum Addressing</em> (invited paper). Marcello Caleffi and Angela Sara Cacciapuoti -- in IEEE Transactions on Communications, vol. 74, pp. 3577–3599, 2026.
 
 [[2]](https://doi.org/10.1016/j.comnet.2026.112292) Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti, _"An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation"_, Computer Networks (Elsevier), 2026.
 
-[[3]](https://doi.org/10.5281/zenodo.18980972) Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti, _"Q2NS: A Modular Framework for Quantum Network Simulation in ns-3"_ (invited paper), Proc. QCNC 2026.
+[[3]](https://doi.org/10.5281/zenodo.18980972) <em>Q2NS: A Modular Framework for Quantum Network Simulation in ns-3</em> (invited paper). Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- Proc. QCNC 2026.
 
 [[4]](https://doi.org/10.48550/arXiv.2604.02112) Francesco Mazza, Adam Pearson, Marcello Caleffi, Angela Sara Cacciapuoti, _"Q2NS Demo: a Quantum Network Simulator based on ns-3"_, 2026.
 

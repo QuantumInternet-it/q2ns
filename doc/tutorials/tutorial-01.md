@@ -201,7 +201,7 @@ int main() {
 The key resource of the Quantum Internet is **entanglement**. Here we:
 
 1. Create two `QNode`s connected by a quantum link
-2. Create a Bell pair $|\Phi^+\rangle$ at node A
+2. Create a Bell pair at node A
 3. Send one qubit to B over the link
 4. Register a receive callback at B
 5. Measure both qubits to verify the entanglement correlation
@@ -353,15 +353,15 @@ Run the introductory examples to see the above concepts in action:
 
 #### Exercise 1: X and Z gates
 
-Create a single node, allocate a qubit, apply an X gate (bit-flip), then measure in the Z-basis. Verify the result is always 1. Then try applying a Z gate to $|0\rangle$ and confirm the measurement is always 0: since $Z$ is diagonal in the computational basis ($Z|0\rangle = |0\rangle$, $Z|1\rangle = -|1\rangle$), it does not alter the Born-rule probabilities of any Z-basis measurement.
+Create a single node, allocate a qubit, apply an X gate (bit-flip), then measure in the Z-basis. Verify the result is always 1. Then try applying a Z gate to ∣0⟩ and confirm the measurement is always 0: since Z is diagonal in the computational basis (Z∣0⟩ = ∣0⟩, Z∣1⟩ = -∣1⟩), it does not alter the Born-rule probabilities of any Z-basis measurement.
 
 ## Related Publications
 
-[[1]](https://ieeexplore.ieee.org/document/11322738) Marcello Caleffi and Angela Sara Cacciapuoti, _"Quantum Internet Architecture: Unlocking Quantum-Native Routing via Quantum Addressing"_ (invited paper), in IEEE Transactions on Communications, vol. 74, pp. 3577–3599, 2026.
+[[1]](https://ieeexplore.ieee.org/document/11322738) <em>Quantum Internet Architecture: Unlocking Quantum-Native Routing via Quantum Addressing</em> (invited paper). Marcello Caleffi and Angela Sara Cacciapuoti -- in IEEE Transactions on Communications, vol. 74, pp. 3577–3599, 2026.
 
 [[2]](https://doi.org/10.1016/j.comnet.2026.112292) Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti, _"An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation"_, Computer Networks (Elsevier), 2026.
 
-[[3]](https://doi.org/10.5281/zenodo.18980972) Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti, _"Q2NS: A Modular Framework for Quantum Network Simulation in ns-3"_ (invited paper), Proc. QCNC 2026.
+[[3]](https://doi.org/10.5281/zenodo.18980972) <em>Q2NS: A Modular Framework for Quantum Network Simulation in ns-3</em> (invited paper). Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- Proc. QCNC 2026.
 
 [[4]](https://doi.org/10.48550/arXiv.2604.02112) Francesco Mazza, Adam Pearson, Marcello Caleffi, Angela Sara Cacciapuoti, _"Q2NS Demo: a Quantum Network Simulator based on ns-3"_, 2026.
 

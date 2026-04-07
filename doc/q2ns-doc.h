@@ -36,9 +36,10 @@
  * - QMap models transmission-induced effects.
  * - QStateRegistry is the shared source of truth for backend states.
  * - QState defines the backend-agnostic state interface.
- * - Analysis provides common quantum networking analysis functions supported.
+ * - Analysis provides common quantum networking analysis functions
+ * supported.
  *
- * @section q2ns_workflow Typical workflow
+ * @section q2ns_workflow Typical Workflow
  * 1. Create a NetController.
  * 2. Create QNodes through the controller.
  * 3. Install links.
@@ -46,14 +47,14 @@
  * 5. Run the ns-3 simulation.
  * 6. Inspect outcomes and compute analysis.
  *
- * @section q2ns_design_goals Design goals
+ * @section q2ns_design_goals Design Goals
  * - separation of concerns
  * - modularity and extensibility
  * - integration with ns-3
  * - multiple quantum-state backends
  * - reproducible randomness
  *
- * @section q2ns_further_reading Further reading
+ * @section q2ns_further_reading Further Reading
  *
  * @subsection q2ns_tutorials_section Tutorials
  * - @ref q2ns_tutorial_visualizer "Tutorial 0: The Visualizer"
@@ -62,9 +63,23 @@
  * - @ref q2ns_tutorial_classical_comms "Tutorial 3: Teleportation with Classical Communication"
  * - @ref q2ns_tutorial_multipartite "Tutorial 4: Multipartite Entanglement and Simulation Experiments"
  *
- * @subsection q2ns_design_docs_section Design and reference notes
+ * @subsection q2ns_design_docs_section Design and Reference Notes
  * - @ref q2ns_architecture_doc "Architecture"
  * - @ref q2ns_randomness_doc "Randomness"
+ *
+ * @section q2ns_publications Related Publications
+ *
+ * <a href="https://ieeexplore.ieee.org/document/11322738">[1]</a> <em>Quantum Internet Architecture: Unlocking Quantum-Native Routing via Quantum Addressing (invited paper)</em>. Marcello Caleffi and Angela Sara Cacciapuoti -- IEEE Transactions on Communications, vol. 74, pp. 3577–3599, 2026.
+ *
+ * <a href="https://arxiv.org/abs/2603.02857">[2]</a> <em>An Extensible Quantum Network Simulator Built on ns-3: Q2NS Design and Evaluation</em>. Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- 2026.
+ *
+ * <a href="https://doi.org/10.5281/zenodo.18980972">[3]</a> <em>Q2NS: A Modular Framework for Quantum Network Simulation in ns-3 (invited paper)</em>. Adam Pearson, Francesco Mazza, Marcello Caleffi, Angela Sara Cacciapuoti -- Proc. QCNC 2026.
+ *
+ * [4] <em>Q2NS Demo: a Quantum Network Simulator based on ns-3</em>. Francesco Mazza, Adam Pearson, Marcello Caleffi, Angela Sara Cacciapuoti -- 2026.
+ *
+ * @section q2ns_acknowledgement Acknowledgement
+ *
+ * This work has been funded by the <b>European Union</b> under Horizon Europe ERC-CoG grant <b>QNattyNet</b>, n. 101169850. Views and opinions expressed are those of the author(s) only and do not necessarily reflect those of the European Union or the European Research Council Executive Agency. Neither the European Union nor the granting authority can be held responsible for them.
  *
  *
  * @defgroup q2ns_api Public API
