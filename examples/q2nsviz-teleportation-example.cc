@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
     // Verify: |+> -> X-measurement should always yield 0
     Trace("Bob verifies teleported state (X-basis)");
     int mx = bob->Measure(bobCtx.eprB, Basis::X);
-    TraceMeasure("bob_epr", "X");
+    TraceMeasure("bob_epr", kSingleGate, "X");
     TraceNodeText("Bob", StrCat("X-measure: ", mx, " (expected 0 -> |+> received)"));
     std::cout << "[VERIFY] Bob's X-measure: " << mx << " (expected 0)\n";
 
@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
       Simulator::Schedule(kTwoQGate, [&, eprA, eprB]() {
         Trace("Alice applies CNOT(eprA, eprB) -> Bell pair |Phi+>");
         alice->Apply(gates::CNOT(), {eprA, eprB});
-        TraceEntangle({"alice_epr", "bob_epr"});
+        TraceEntangle({"alice_epr", "bob_epr"}, kTwoQGate);
         TraceSetBitColor("alice_epr", "#117733");
         TraceSetBitColor("bob_epr", "#117733");
         TraceNodeText("Alice", "CNOT(eprA, eprB): Bell pair |Phi+> ready");
@@ -252,8 +252,8 @@ int main(int argc, char** argv) {
                   // BSM step 3 - Z-measure psi and eprA
                   Simulator::Schedule(kSingleGate, [&, eprA, psi]() {
                     Trace("Alice BSM step 3: Z-measure psi and eprA");
-                    TraceMeasure("psi");
-                    TraceMeasure("alice_epr");
+                    TraceMeasure("psi", kSingleGate);
+                    TraceMeasure("alice_epr", kSingleGate);
 
                     int m1 = alice->Measure(psi);  // Z-basis -> Z correction at Bob
                     int m2 = alice->Measure(eprA); // Z-basis -> X correction at Bob

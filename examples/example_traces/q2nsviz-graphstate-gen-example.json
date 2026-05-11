@@ -24,12 +24,12 @@
 {"type":"setBitColor","t_ns":1100,"bit":"q4","color":"#bc71eb"}
 {"type":"traceText","t_ns":1400,"text":"CZ layer 1: CZ(q0,q1) CZ(q2,q3)"}
 {"type":"traceText","t_ns":1400,"node":"Orchestrator","text":"CZ layer 1"}
-{"type":"entangle","t_ns":1400,"bits":["q0","q1"]}
-{"type":"entangle","t_ns":1400,"bits":["q2","q3"]}
+{"type":"entangle","t_ns":1400,"duration_ns":300,"bits":["q0","q1"]}
+{"type":"entangle","t_ns":1400,"duration_ns":300,"bits":["q2","q3"]}
 {"type":"traceText","t_ns":1700,"text":"CZ layer 2: CZ(q1,q2) CZ(q3,q4) - cluster state ready"}
 {"type":"traceText","t_ns":1700,"node":"Orchestrator","text":"CZ layer 2 - cluster state ready"}
-{"type":"entangle","t_ns":1700,"bits":["q1","q2"]}
-{"type":"entangle","t_ns":1700,"bits":["q3","q4"]}
+{"type":"entangle","t_ns":1700,"duration_ns":300,"bits":["q1","q2"]}
+{"type":"entangle","t_ns":1700,"duration_ns":300,"bits":["q3","q4"]}
 {"type":"traceText","t_ns":1800,"text":"Orchestrator sends q0, q2, q4 to clients"}
 {"type":"traceText","t_ns":1800,"node":"Orchestrator","text":"Sending q0/q2/q4 to clients"}
 {"type":"sendBit","t0_ns":1800,"t1_ns":1810,"bit":"q0","from":"Orchestrator","to":"Client1","kind":"quantum"}
@@ -44,10 +44,10 @@
 {"type":"traceText","t_ns":1910,"text":"Orchestrator measures q1, q3 in X-basis"}
 {"type":"traceText","t_ns":1910,"node":"Orchestrator","text":"Measuring q1, q3 (X-basis)"}
 {"type":"traceText","t_ns":1910,"text":"q1 X-measure outcome = 1"}
-{"type":"graphMeasure","t_ns":1910,"bit":"q1","base":"X"}
+{"type":"graphMeasure","t_ns":1910,"duration_ns":100,"bit":"q1","base":"X"}
 {"type":"removeBit","t_ns":1910,"bit":"q1"}
 {"type":"traceText","t_ns":1910,"text":"q3 X-measure outcome = 0"}
-{"type":"graphMeasure","t_ns":1910,"bit":"q3","base":"X"}
+{"type":"graphMeasure","t_ns":1910,"duration_ns":100,"bit":"q3","base":"X"}
 {"type":"removeBit","t_ns":1910,"bit":"q3"}
 {"type":"traceText","t_ns":1910,"node":"Orchestrator","text":"Measurements complete - sending outcomes to clients"}
 {"type":"sendPacket","t0_ns":1910,"t1_ns":1920,"from":"Orchestrator","to":"Client1","label":"q1 outcome: m=1"}

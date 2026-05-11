@@ -221,19 +221,19 @@ int main(int argc, char** argv) {
       Simulator::Schedule(kTwoQGate, [=] {
         Trace("CNOT(q0, q1)");
         node1->Apply(q2ns::gates::CNOT(), {q0, q1});
-        TraceEntangle({"q0", "q1"});
+        TraceEntangle({"q0", "q1"}, kTwoQGate);
         TraceNodeText("Node1", "CNOT(q0, q1)");
 
         Simulator::Schedule(kTwoQGate, [=] {
           Trace("CNOT(q0, q2)");
           node1->Apply(q2ns::gates::CNOT(), {q0, q2});
-          TraceEntangle({"q0", "q2"});
+          TraceEntangle({"q0", "q2"}, kTwoQGate);
           TraceNodeText("Node1", "CNOT(q0, q2)");
 
           Simulator::Schedule(kTwoQGate, [=] {
             Trace("CNOT(q0, q3) - GHZ state ready");
             node1->Apply(q2ns::gates::CNOT(), {q0, q3});
-            TraceEntangle({"q0", "q3"});
+            TraceEntangle({"q0", "q3"}, kTwoQGate);
             TraceNodeText("Node1", "GHZ state ready");
             std::cout << "[NODE1] GHZ state prepared: (|0000> + |1111>)/sqrt(2)\n";
 

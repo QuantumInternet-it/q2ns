@@ -198,7 +198,7 @@ public:
    * @brief Set the tracked location for a qubit handle.
    *
    * This also ensures the global qubit-id directory can resolve the qubit id
-   * back to a handle while the handle remains alive.
+   * back to the handle.
    *
    * @param q Qubit handle.
    * @param loc Location descriptor.
@@ -250,7 +250,7 @@ public:
   /**
    * @brief Return a tracked qubit handle by qubit id.
    * @param id Qubit identifier.
-   * @return Shared pointer to the qubit handle, or nullptr if unknown or expired.
+   * @return Shared pointer to the qubit handle, or nullptr if unknown.
    *
    * @see GetQubitsAtNode
    * @see GetLocalQubits
@@ -260,8 +260,7 @@ public:
   /**
    * @brief Return qubit handles currently located at a given node.
    *
-   * The returned vector is a snapshot taken at call time. Expired handles are
-   * filtered out. Element order is not guaranteed.
+   * The returned vector is a snapshot taken at call time. Element order is not guaranteed.
    *
    * @param nodeId Node identifier.
    * @return Snapshot of qubit handles currently local to that node.
@@ -273,7 +272,7 @@ public:
   /**
    * @brief Return qubit handles that currently belong to a given state.
    * @param stateId State identifier.
-   * @return Snapshot of qubit handles in that state with expired entries filtered out.
+   * @return Snapshot of qubit handles in that state.
    *
    * @see GetState
    */
@@ -300,12 +299,12 @@ private:
   QubitId nextQubitId_ = 1; //!< Next qubit id to assign.
 
   std::unordered_map<StateId, std::shared_ptr<QState>> states_; //!< State id to backend state.
-  std::unordered_map<StateId, std::vector<std::weak_ptr<Qubit>>>
-      members_;                                    //!< State id to member qubit handles.
+  std::unordered_map<StateId, std::vector<std::shared_ptr<Qubit>>>
+      members_;                                    //!< State id to shared member qubit handles.
   std::unordered_map<QubitId, Location> location_; //!< Qubit id to current location.
   std::unordered_map<uint32_t, std::unordered_set<QubitId>>
       qubitsAtNode_; //!< Node id to currently local qubit ids.
-  std::unordered_map<QubitId, std::weak_ptr<Qubit>> qubitById_; //!< Qubit id to weak handle.
+  std::unordered_map<QubitId, std::shared_ptr<Qubit>> qubitById_; //!< Qubit id to shared handle.
 };
 
 /**

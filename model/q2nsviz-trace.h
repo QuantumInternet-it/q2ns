@@ -22,9 +22,9 @@
     - createChannel  {t_ns, from, to, kind}
     - createBit      {t_ns, node, label, kind, color}
     - setBitColor    {t_ns, bit, color}
-    - entangle       {t_ns, bits:[...]}
-    - measure        {t_ns, bit, base, b0}        // generic measurement
-    - graphMeasure   {t_ns, bit, base, supportNode}  // graph state measurement
+    - entangle       {t_ns, bits:[...]}                       // or {t_ns, duration_ns, bits:[...]}
+    - measure        {t_ns, bit, base, b0}              // or {t_ns, duration_ns, bit, base}
+    - graphMeasure   {t_ns, bit, base, supportNode}    // or {t_ns, duration_ns, bit, base, supportNode}
     - sendBit        {t0_ns, t1_ns, bit, from, to, kind}
     - sendPacket     {t0_ns, t1_ns, from, to, label}
     - traceText      {t_ns, text}                 // trace panel (persistent)
@@ -98,6 +98,25 @@ inline void TraceEntangle(const std::vector<std::string>& bits) {
   TraceWriter::Instance().Write(o.str());
 }
 
+/* TraceEntangle with gate duration for physical accuracy.
+   The visualizer computes t0 = t_ns - duration_ns. */
+inline void TraceEntangle(const std::vector<std::string>& bits, uint64_t duration_ns) {
+  std::ostringstream o;
+  o << "{"
+    << "\"type\":\"entangle\",\"t_ns\":" << JTns() << ",\"duration_ns\":" << duration_ns
+    << ",\"bits\":[";
+  for (size_t i = 0; i < bits.size(); ++i) {
+    if (i)
+      o << ",";
+    o << J(bits[i]);
+  }
+  o << "]}";
+  TraceWriter::Instance().Write(o.str());
+}
+inline void TraceEntangle(const std::vector<std::string>& bits, ns3::Time duration) {
+  TraceEntangle(bits, duration.GetNanoSeconds());
+}
+
 /* Measure/collapse a bit: removes the bit from any entanglement going forward.
    Optional measurement basis (default "Z"). */
 inline void TraceMeasure(const std::string& bitLabel, const std::string& base = "Z") {
@@ -106,6 +125,21 @@ inline void TraceMeasure(const std::string& bitLabel, const std::string& base = 
     << "\"type\":\"measure\",\"t_ns\":" << JTns() << ",\"bit\":" << J(bitLabel)
     << ",\"base\":" << J(base) << "}";
   TraceWriter::Instance().Write(o.str());
+}
+
+/* TraceMeasure with gate duration for physical accuracy.
+   The visualizer computes t0 = t_ns - duration_ns. */
+inline void TraceMeasure(const std::string& bitLabel, uint64_t duration_ns,
+                        const std::string& base = "Z") {
+  std::ostringstream o;
+  o << "{"
+    << "\"type\":\"measure\",\"t_ns\":" << JTns() << ",\"duration_ns\":" << duration_ns
+    << ",\"bit\":" << J(bitLabel) << ",\"base\":" << J(base) << "}";
+  TraceWriter::Instance().Write(o.str());
+}
+inline void TraceMeasure(const std::string& bitLabel, ns3::Time duration,
+                        const std::string& base = "Z") {
+  TraceMeasure(bitLabel, duration.GetNanoSeconds(), base);
 }
 
 /* Graph state measurement: visualization for graph-state operations. */
@@ -120,6 +154,27 @@ inline void TraceGraphMeasure(const std::string& bitLabel, const std::string& ba
   }
   o << "}";
   TraceWriter::Instance().Write(o.str());
+}
+
+/* TraceGraphMeasure with gate duration for physical accuracy.
+   The visualizer computes t0 = t_ns - duration_ns. */
+inline void TraceGraphMeasure(const std::string& bitLabel, uint64_t duration_ns,
+                              const std::string& base = "Z",
+                              const std::string& supportNode = "") {
+  std::ostringstream o;
+  o << "{"
+    << "\"type\":\"graphMeasure\",\"t_ns\":" << JTns() << ",\"duration_ns\":" << duration_ns
+    << ",\"bit\":" << J(bitLabel) << ",\"base\":" << J(base);
+  if (!supportNode.empty()) {
+    o << ",\"supportNode\":" << J(supportNode);
+  }
+  o << "}";
+  TraceWriter::Instance().Write(o.str());
+}
+inline void TraceGraphMeasure(const std::string& bitLabel, ns3::Time duration,
+                              const std::string& base = "Z",
+                              const std::string& supportNode = "") {
+  TraceGraphMeasure(bitLabel, duration.GetNanoSeconds(), base, supportNode);
 }
 
 inline void TraceRemoveBit(const std::string& bitLabel, uint64_t t_ns = NowNs()) {

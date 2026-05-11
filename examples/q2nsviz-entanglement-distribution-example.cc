@@ -225,7 +225,7 @@ int main(int argc, char** argv) {
       // T + 400 ns: CNOT(q0a, q0b) -> |Phi+>
       Simulator::Schedule(kTwoQGate, [=]() {
         node1->Apply(gates::CNOT(), {q0a, q0b});
-        TraceEntangle({"bell_0_a", "bell_0_b"});
+        TraceEntangle({"bell_0_a", "bell_0_b"}, kTwoQGate);
         TraceNodeText("Node1", "Bell pair 0 ready");
 
         // T + 500 ns: send q0b to Node2 (arrives T + 600 ns; ACK returns ~T + 1.6 ms)
@@ -262,7 +262,7 @@ int main(int argc, char** argv) {
 
       Simulator::Schedule(kTwoQGate, [=]() {
         node1->Apply(gates::CNOT(), {q1a, q1b});
-        TraceEntangle({"bell_1_a", "bell_1_b"});
+        TraceEntangle({"bell_1_a", "bell_1_b"}, kTwoQGate);
         TraceNodeText("Node1", "Bell pair 1 ready");
 
         Simulator::Schedule(kSingleGate, [=]() {
@@ -297,7 +297,7 @@ int main(int argc, char** argv) {
 
       Simulator::Schedule(kTwoQGate, [=]() {
         node2->Apply(gates::CNOT(), {q2a, q2b});
-        TraceEntangle({"bell_2_a", "bell_2_b"});
+        TraceEntangle({"bell_2_a", "bell_2_b"}, kTwoQGate);
         TraceNodeText("Node2", "Bell pair 2 ready");
 
         Simulator::Schedule(kSingleGate, [=]() {

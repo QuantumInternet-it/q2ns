@@ -247,18 +247,18 @@ int main(int argc, char** argv) {
         Trace("CZ layer 1: CZ(q0,q1) CZ(q2,q3)");
         TraceNodeText("Orchestrator", "CZ layer 1");
         orch->Apply(q2ns::gates::CZ(), {qubits[0], qubits[1]});
-        TraceEntangle({qubits[0]->GetLabel(), qubits[1]->GetLabel()});
+        TraceEntangle({qubits[0]->GetLabel(), qubits[1]->GetLabel()}, kTwoQGate);
         orch->Apply(q2ns::gates::CZ(), {qubits[2], qubits[3]});
-        TraceEntangle({qubits[2]->GetLabel(), qubits[3]->GetLabel()});
+        TraceEntangle({qubits[2]->GetLabel(), qubits[3]->GetLabel()}, kTwoQGate);
 
         // CZ layer 2 - CZ(q1,q2) and CZ(q3,q4)
         Simulator::Schedule(kTwoQGate, [&] {
           Trace("CZ layer 2: CZ(q1,q2) CZ(q3,q4) - cluster state ready");
           TraceNodeText("Orchestrator", "CZ layer 2 - cluster state ready");
           orch->Apply(q2ns::gates::CZ(), {qubits[1], qubits[2]});
-          TraceEntangle({qubits[1]->GetLabel(), qubits[2]->GetLabel()});
+          TraceEntangle({qubits[1]->GetLabel(), qubits[2]->GetLabel()}, kTwoQGate);
           orch->Apply(q2ns::gates::CZ(), {qubits[3], qubits[4]});
-          TraceEntangle({qubits[3]->GetLabel(), qubits[4]->GetLabel()});
+          TraceEntangle({qubits[3]->GetLabel(), qubits[4]->GetLabel()}, kTwoQGate);
 
           // Send even-indexed qubits to clients
           Simulator::Schedule(kSingleGate, [&] {
@@ -282,13 +282,13 @@ int main(int argc, char** argv) {
               // Measure q1: neighbors are q0 (Client1) and q2 (Client2)
               auto m1 = orch->Measure(qubits[1], Basis::X);
               Trace("q1 X-measure outcome = ", m1);
-              TraceGraphMeasure("q1", "X");
+              TraceGraphMeasure("q1", kSingleGate, "X");
               TraceRemoveBit("q1");
 
               // Measure q3: neighbors are q2 (Client2) and q4 (Client3)
               auto m3 = orch->Measure(qubits[3], Basis::X);
               Trace("q3 X-measure outcome = ", m3);
-              TraceGraphMeasure("q3", "X");
+              TraceGraphMeasure("q3", kSingleGate, "X");
               TraceRemoveBit("q3");
 
               TraceNodeText("Orchestrator", "Measurements complete - sending outcomes to clients");

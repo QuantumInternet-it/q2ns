@@ -256,8 +256,7 @@ void QStateRegistry::Register(const std::shared_ptr<Qubit>& q) {
   auto& vec = members_[sid];
   const auto raw = q.get();
 
-  for (const auto& w : vec) {
-    auto sp = w.lock();
+  for (const auto& sp : vec) {
     if (sp && sp.get() == raw) {
       return;
     }
@@ -281,12 +280,10 @@ void QStateRegistry::Unregister(const std::shared_ptr<Qubit>& q) {
   auto& vec = it->second;
   const auto raw = q.get();
 
-  vec.erase(std::remove_if(vec.begin(), vec.end(),
-                           [&](const std::weak_ptr<Qubit>& w) {
-                             auto sp = w.lock();
-                             return !sp || sp.get() == raw;
-                           }),
-            vec.end());
+  vec.erase(
+      std::remove_if(vec.begin(), vec.end(),
+                     [&](const std::shared_ptr<Qubit>& sp) { return !sp || sp.get() == raw; }),
+      vec.end());
 }
 
 void QStateRegistry::UnregisterEverywhere(const std::shared_ptr<Qubit>& q) {
@@ -299,12 +296,10 @@ void QStateRegistry::UnregisterEverywhere(const std::shared_ptr<Qubit>& q) {
 
   for (auto& [sid, vec] : members_) {
     (void) sid;
-    vec.erase(std::remove_if(vec.begin(), vec.end(),
-                             [&](const std::weak_ptr<Qubit>& w) {
-                               auto sp = w.lock();
-                               return !sp || sp.get() == raw;
-                             }),
-              vec.end());
+    vec.erase(
+        std::remove_if(vec.begin(), vec.end(),
+                       [&](const std::shared_ptr<Qubit>& sp) { return !sp || sp.get() == raw; }),
+        vec.end());
   }
 }
 
@@ -385,7 +380,7 @@ std::shared_ptr<Qubit> QStateRegistry::GetQubitHandle(QubitId id) const {
     return nullptr;
   }
 
-  return it->second.lock();
+  return it->second;
 }
 
 std::vector<std::shared_ptr<Qubit>> QStateRegistry::GetLocalQubits(uint32_t nodeId) const {
@@ -415,8 +410,8 @@ std::vector<std::shared_ptr<Qubit>> QStateRegistry::QubitsOf(StateId stateId) co
   }
 
   out.reserve(it->second.size());
-  for (const auto& w : it->second) {
-    if (auto sp = w.lock()) {
+  for (const auto& sp : it->second) {
+    if (sp) {
       out.push_back(sp);
     }
   }

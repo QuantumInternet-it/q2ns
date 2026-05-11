@@ -18,13 +18,13 @@
 {"type":"setBitColor","t_ns":1100,"bit":"q0","color":"#BC71EB"}
 {"type":"traceText","t_ns":1100,"node":"Node1","text":"H(q0)"}
 {"type":"traceText","t_ns":1400,"text":"CNOT(q0, q1)"}
-{"type":"entangle","t_ns":1400,"bits":["q0","q1"]}
+{"type":"entangle","t_ns":1400,"duration_ns":300,"bits":["q0","q1"]}
 {"type":"traceText","t_ns":1400,"node":"Node1","text":"CNOT(q0, q1)"}
 {"type":"traceText","t_ns":1700,"text":"CNOT(q0, q2)"}
-{"type":"entangle","t_ns":1700,"bits":["q0","q2"]}
+{"type":"entangle","t_ns":1700,"duration_ns":300,"bits":["q0","q2"]}
 {"type":"traceText","t_ns":1700,"node":"Node1","text":"CNOT(q0, q2)"}
 {"type":"traceText","t_ns":2000,"text":"CNOT(q0, q3) - GHZ state ready"}
-{"type":"entangle","t_ns":2000,"bits":["q0","q3"]}
+{"type":"entangle","t_ns":2000,"duration_ns":300,"bits":["q0","q3"]}
 {"type":"traceText","t_ns":2000,"node":"Node1","text":"GHZ state ready"}
 {"type":"traceText","t_ns":2100,"text":"Distributing GHZ qubits to nodes"}
 {"type":"traceText","t_ns":2100,"node":"Node1","text":"Sending q1/q2/q3 to nodes 2/3/4"}

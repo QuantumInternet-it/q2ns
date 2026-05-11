@@ -10,7 +10,7 @@
 {"type":"setBitColor","t_ns":1100,"bit":"alice_epr","color":"#bc71eb"}
 {"type":"traceText","t_ns":1100,"node":"Alice","text":"H(eprA)"}
 {"type":"traceText","t_ns":1400,"text":"Alice applies CNOT(eprA, eprB) -> Bell pair |Phi+>"}
-{"type":"entangle","t_ns":1400,"bits":["alice_epr","bob_epr"]}
+{"type":"entangle","t_ns":1400,"duration_ns":300,"bits":["alice_epr","bob_epr"]}
 {"type":"setBitColor","t_ns":1400,"bit":"alice_epr","color":"#117733"}
 {"type":"setBitColor","t_ns":1400,"bit":"bob_epr","color":"#117733"}
 {"type":"traceText","t_ns":1400,"node":"Alice","text":"CNOT(eprA, eprB): Bell pair |Phi+> ready"}
@@ -31,8 +31,8 @@
 {"type":"traceText","t_ns":4000,"text":"Alice BSM step 2: H(psi)"}
 {"type":"traceText","t_ns":4000,"node":"Alice","text":"BSM step 2: H(psi)"}
 {"type":"traceText","t_ns":4100,"text":"Alice BSM step 3: Z-measure psi and eprA"}
-{"type":"measure","t_ns":4100,"bit":"psi","base":"Z"}
-{"type":"measure","t_ns":4100,"bit":"alice_epr","base":"Z"}
+{"type":"measure","t_ns":4100,"duration_ns":100,"bit":"psi","base":"Z"}
+{"type":"measure","t_ns":4100,"duration_ns":100,"bit":"alice_epr","base":"Z"}
 {"type":"traceText","t_ns":4100,"text":"BSM outcome: m1=1 m2=0"}
 {"type":"setBitColor","t_ns":4100,"bit":"psi","color":"#000000"}
 {"type":"setBitColor","t_ns":4100,"bit":"alice_epr","color":"#FFFFFF"}
@@ -49,5 +49,5 @@
 {"type":"setBitColor","t_ns":6670,"bit":"bob_epr","color":"#DDCC77"}
 {"type":"traceText","t_ns":6670,"node":"Bob","text":"Teleportation complete - eprB holds psi state"}
 {"type":"traceText","t_ns":6670,"text":"Bob verifies teleported state (X-basis)"}
-{"type":"measure","t_ns":6670,"bit":"bob_epr","base":"X"}
+{"type":"measure","t_ns":6670,"duration_ns":100,"bit":"bob_epr","base":"X"}
 {"type":"traceText","t_ns":6670,"node":"Bob","text":"X-measure: 0 (expected 0 -> |+> received)"}
